@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vida Dupla — Duo Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { corePlugins: { preflight: false } };
+</script>
+<style>
+  :root {
+    --bg:#eef2f8; --card:#fff; --ink:#1b2230; --muted:#5e6b82; --line:#e4e9f2;
+    --accent:#6c5ce7; --accent2:#0f9f78; --good:#12945f; --warn:#d4920a; --bad:#e24b5b;
+    --shadow:0 12px 32px rgba(28,39,68,.08); --fab1:#6c5ce7; --fab2:#8a7cff;
+  }
+  html[data-theme="dark"] {
+    --bg:#0e1220; --card:#171c2e; --ink:#eef2ff; --muted:#a3adc4; --line:#2c3450;
+    --accent:#8b7cff; --accent2:#2ad4a8; --good:#3ddc97; --warn:#f5c451; --bad:#ff6b7d;
+    --shadow:0 14px 36px rgba(0,0,0,.35); --fab1:#6d5efc; --fab2:#2ee9ff;
+  }
+  html[data-theme="neon"] {
+    --bg:#07010f; --card:#14081f; --ink:#f7ecff; --muted:#c9b6e8; --line:#43265f;
+    --accent:#ff2bd6; --accent2:#2ee9ff; --good:#3dff9a; --warn:#ffe14a; --bad:#ff3b6b;
+    --shadow:0 0 28px rgba(255,43,214,.22); --fab1:#ff2bd6; --fab2:#2ee9ff;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; min-height:100%; }
+  body {
+    font-family:Inter, system-ui, sans-serif; background:
+      radial-gradient(1200px 500px at 10% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 50%),
+      var(--bg);
+    color:var(--ink);
+  }
+  button, input, select { font-family:inherit; color:inherit; }
+  button { cursor:pointer; }
+  h1,h2,h3,.display { font-family:Poppins, Inter, sans-serif; margin:0; }
+  small, .muted { color:var(--muted); }
+  .wrap { max-width:1180px; margin:0 auto; padding:16px 14px 108px; }
+  .topwrap { position:sticky; top:0; z-index:20; padding-top:8px; background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(14px); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); padding:14px; }
+  .hero { text-align:center; padding:28px 18px 18px; }
+  .hero h1 { font-size:clamp(32px, 6vw, 58px); letter-spacing:-.04em; }
+  .grad { background:linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .menu-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:18px; }
+  .big { width:100%; border:0; border-radius:18px; padding:16px; background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow); text-align:left; }
+  .big:hover { transform:translateY(-2px); }
+  .big b { display:block; font-size:18px; margin-bottom:4px; }
+  .seg { display:flex; gap:6px; flex-wrap:wrap; }
+  .seg button, .btn { border:0; border-radius:999px; padding:8px 14px; font-weight:700; background:var(--accent); color:#fff; }
+  .seg button { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  .seg button.on { background:var(--accent); color:#fff; border-color:transparent; }
+  .btn.alt { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  .btn.good { background:var(--good); color:#04210f; }
+  .btn.bad { background:var(--bad); }
+  .btn.warn { background:var(--warn); color:#2a1d00; }
+  .btn.tiny { padding:6px 10px; font-size:12px; }
+  .btn:active { transform:translateY(1px) scale(.98); }
+  .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .row { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--line); }
+  .row:last-child { border-bottom:0; }
+  .row b { display:block; }
+  .row small { display:block; line-height:1.35; }
+  .row-actions { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+  .stage { display:grid; gap:12px; margin-top:12px; }
+  .scroll { max-height:calc(100dvh - 250px); overflow:auto; }
+  .entry { border-radius:14px; padding:10px 12px; margin-bottom:8px; background:color-mix(in srgb, var(--line) 65%, var(--card)); line-height:1.4; }
+  .entry b { font-size:12px; margin-right:6px; color:var(--muted); }
+  .entry.good { background:color-mix(in srgb, var(--good) 18%, var(--card)); }
+  .entry.bad { background:color-mix(in srgb, var(--bad) 18%, var(--card)); }
+  .entry.money { background:color-mix(in srgb, var(--good) 16%, var(--card)); }
+  .entry.crime { background:color-mix(in srgb, var(--warn) 20%, var(--card)); }
+  .entry.friend { box-shadow:inset 3px 0 0 var(--accent); }
+  .stat { margin:6px 0; }
+  .stat-top { display:flex; justify-content:space-between; font-size:13px; font-weight:700; }
+  .track { height:8px; border-radius:99px; background:color-mix(in srgb, var(--line) 80%, transparent); overflow:hidden; }
+  .fill { height:100%; border-radius:99px; transition:width .45s ease; }
+  .who { display:flex; gap:10px; align-items:center; }
+  .avatar { width:64px; height:64px; border-radius:50%; background:color-mix(in srgb, var(--accent) 16%, var(--card)); display:grid; place-items:center; position:relative; flex:0 0 auto; }
+  .avatar span.emo { position:absolute; right:-4px; bottom:-4px; font-size:18px; }
+  .moneyline { font-weight:800; font-size:20px; }
+  .pills { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .pill { font-size:12px; font-weight:700; padding:4px 8px; border-radius:999px; background:color-mix(in srgb, var(--accent) 14%, var(--card)); }
+  .dock { position:fixed; left:0; right:0; bottom:0; z-index:25; display:flex; justify-content:space-around; align-items:flex-end; gap:4px; padding:8px 10px calc(12px + env(safe-area-inset-bottom)); background:color-mix(in srgb, var(--card) 92%, transparent); border-top:1px solid var(--line); backdrop-filter:blur(16px); }
+  .dock button.tab { background:transparent; border:0; color:var(--muted); font-weight:700; font-size:12px; min-width:68px; }
+  .dock button.tab.on { color:var(--accent); }
+  .fab { width:78px; height:78px; margin-top:-36px; border-radius:50%; border:0; color:#fff; font-weight:800; background:radial-gradient(circle at 30% 30%, var(--fab2), var(--fab1)); box-shadow:0 10px 24px color-mix(in srgb, var(--accent) 45%, transparent); display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1; }
+  .fab small { font-weight:700; opacity:.9; }
+  .fab.wait { animation:pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 50% { transform:scale(.96); filter:saturate(.7); } }
+  .modal-back { position:fixed; inset:0; z-index:40; background:rgba(5,8,16,.55); display:grid; place-items:center; padding:16px; }
+  .modal { width:min(520px, 100%); background:var(--card); color:var(--ink); border-radius:24px; padding:18px; border:1px solid var(--line); box-shadow:var(--shadow); animation:pop .2s ease; }
+  @keyframes pop { from { transform:translateY(8px) scale(.98); opacity:.4; } }
+  .choices { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .choices button, .stack button { text-align:left; }
+  .code { font-family:Poppins, sans-serif; letter-spacing:.28em; font-size:clamp(36px, 8vw, 68px); margin:8px 0; }
+  #toasts { position:fixed; top:12px; right:12px; z-index:80; display:flex; flex-direction:column; gap:8px; max-width:min(360px, calc(100% - 24px)); }
+  .toast { background:var(--ink); color:var(--bg); padding:10px 12px; border-radius:14px; box-shadow:var(--shadow); animation:pop .2s ease; }
+  .confetti { position:fixed; top:-12px; width:8px; height:14px; z-index:70; pointer-events:none; animation:fall 1.7s linear forwards; }
+  @keyframes fall { to { transform:translateY(105vh) rotate(var(--r)); opacity:.15; } }
+  html.alarm::after { content:""; position:fixed; inset:0; z-index:65; pointer-events:none; animation:strobe .35s linear 6; }
+  @keyframes strobe { 0%,100% { background:rgba(226,75,91,.38);} 50% { background:rgba(55,110,255,.38);} }
+  .tomb { max-width:440px; margin:18px auto; background:linear-gradient(#ded8cc, #b9b3a6); color:#2c2926; border-radius:90px 90px 16px 16px; padding:28px 20px 20px; text-align:center; box-shadow:inset 0 -10px 0 rgba(0,0,0,.08), var(--shadow); }
+  .ribbon { display:inline-block; margin:4px; padding:4px 8px; border-radius:999px; background:#2c2926; color:#f4efe6; font-size:12px; font-weight:700; }
+  .swatch { width:28px; height:28px; border-radius:50%; border:2px solid #fff; }
+  .swatch.on { outline:3px solid var(--accent); }
+  .field { display:flex; flex-direction:column; gap:4px; margin-bottom:10px; text-align:left; }
+  .field input, .field select { border:1px solid var(--line); background:var(--bg); border-radius:12px; padding:10px 12px; }
+  .split { display:grid; grid-template-columns:1.1fr .9fr; gap:14px; }
+  .bars { display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:8px; }
+  html[data-layout="desktop"] .stage, html[data-layout="auto"] .stage { grid-template-columns:minmax(260px, 320px) minmax(0,1fr) minmax(260px, 320px); }
+  html[data-layout="tablet"] .stage { grid-template-columns:minmax(240px, 300px) minmax(0,1fr); }
+  html[data-layout="tablet"] .col-friend { grid-column:1 / -1; }
+  html[data-layout="mobile"] .stage { grid-template-columns:1fr; }
+  html[data-layout="mobile"] .col-friend, html[data-layout="mobile"] .col-main { display:none; }
+  html[data-layout="mobile"][data-panel="open"] .col-timeline { display:none; }
+  html[data-layout="mobile"][data-panel="open"] .col-main { display:block; }
+  html[data-layout="mobile"] .bars { grid-template-columns:1fr 1fr; }
+  @media (max-width: 799px) {
+    html[data-layout="auto"] .stage { grid-template-columns:1fr; }
+    html[data-layout="auto"] .col-friend, html[data-layout="auto"] .col-main { display:none; }
+    html[data-layout="auto"][data-panel="open"] .col-timeline { display:none; }
+    html[data-layout="auto"][data-panel="open"] .col-main { display:block; }
+    html[data-layout="auto"] .bars { grid-template-columns:1fr 1fr; }
+    .split { grid-template-columns:1fr; }
+  }
+  @media (min-width: 800px) and (max-width: 1099px) {
+    html[data-layout="auto"] .stage { grid-template-columns:minmax(230px, 280px) minmax(0,1fr); }
+    html[data-layout="auto"] .col-friend { grid-column:1 / -1; }
+  }
+  @media (min-width: 1100px) {
+    html[data-layout="auto"] .stage { grid-template-columns:minmax(260px, 330px) minmax(0,1fr) minmax(260px, 320px); }
+  }
+  .hand { font-size:28px; letter-spacing:4px; }
+  .hint { font-size:13px; color:var(--muted); line-height:1.45; }
+</style>
+</head>
+<body>
+<div id="app" class="wrap"></div>
+<div id="fx"></div>
+<div id="toasts"></div>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+const COUNTRIES = [
+  { id:'br', name:'Brasil', tax:0.27, sal:0.75, col:0.72, cities:['Rio de Janeiro','São Paulo','Salvador','Curitiba','Florianópolis','Belo Horizonte'] },
+  { id:'us', name:'EUA', tax:0.32, sal:1.35, col:1.15, cities:['Nova York','Los Angeles','Miami','Austin','Chicago'] },
+  { id:'jp', name:'Japão', tax:0.30, sal:1.15, col:1.2, cities:['Tóquio','Osaka','Quioto','Sapporo'] },
+  { id:'mc', name:'Mônaco', tax:0, sal:1.85, col:2.15, cities:['Monte Carlo','Fontvieille'] },
+  { id:'ch', name:'Suíça', tax:0.22, sal:1.6, col:1.7, cities:['Zurique','Genebra','Berna','Lucerna'] },
+  { id:'fr', name:'França', tax:0.35, sal:1.05, col:1.1, cities:['Paris','Lyon','Nice','Marselha'] },
+  { id:'ae', name:'Emirados Árabes', tax:0, sal:1.4, col:1.3, cities:['Dubai','Abu Dhabi'] },
+  { id:'au', name:'Austrália', tax:0.29, sal:1.2, col:1.15, cities:['Sydney','Melbourne','Brisbane'] },
+  { id:'mx', name:'México', tax:0.25, sal:0.68, col:0.65, cities:['Cidade do México','Cancún','Guadalajara'] },
+  { id:'it', name:'Itália', tax:0.33, sal:0.95, col:1, cities:['Roma','Milão','Veneza','Florença'] }
+];
+const TALENTS = [
+  { id:'crime', name:'Crime', emoji:'🕶️', blurb:'Golpes, fugas e a máfia rendem mais.' },
+  { id:'finance', name:'Finanças', emoji:'📈', blurb:'Poupança, dividendos e vendas pagam melhor.' },
+  { id:'sports', name:'Esportes', emoji:'🏅', blurb:'Corpo forte e salário de atleta.' },
+  { id:'music', name:'Música', emoji:'🎵', blurb:'Palco, felicidade e presença.' },
+  { id:'tech', name:'Tecnologia', emoji:'💻', blurb:'Hacks e carreiras digitais.' }
+];
+const FIRST = {
+  m:['Miguel','Arthur','Gael','Heitor','Theo','Davi','Bernardo','Gabriel','Lucas','Pedro','Henrique','Caio','Otto','Benício','Vicente'],
+  f:['Helena','Alice','Laura','Maria','Valentina','Sophia','Cecília','Luna','Manuela','Júlia','Clara','Aurora','Olívia','Beatriz','Heloísa'],
+  x:['Ariel','Noa','Dani','Sasha','Ren','Isa','Alex','Yuri','Sam','Indigo']
+};
+const LAST = ['Silva','Santos','Oliveira','Souza','Costa','Ferreira','Almeida','Ribeiro','Carvalho','Gomes','Martins','Rocha','Barbosa','Moreira','Cardoso','Azevedo','Teixeira','Mendes'];
+const MAJORS = [
+  { id:'direito', name:'Direito', tuition:18000, min:50 },
+  { id:'medicina', name:'Medicina', tuition:32000, min:65 },
+  { id:'eng', name:'Engenharia', tuition:22000, min:55 },
+  { id:'cc', name:'Ciência da Computação', tuition:20000, min:50 },
+  { id:'artes', name:'Artes', tuition:14000, min:40 }
+];
+const CLUBS = [
+  { id:'futebol', name:'Futebol', fx:{health:8, happiness:4} },
+  { id:'teatro', name:'Teatro', fx:{looks:6, happiness:5} },
+  { id:'xadrez', name:'Xadrez', fx:{smarts:8, happiness:1} },
+  { id:'banda', name:'Banda', fx:{happiness:8, looks:2} },
+  { id:'code', name:'Programação', fx:{smarts:7, happiness:2} }
+];
+const CAREERS = [
+  { id:'cashier', title:'Caixa de mercado', emoji:'🧾', base:22000, minAge:16, maxAge:32 },
+  { id:'sitter', title:'Babá', emoji:'🍼', base:20000, minAge:16, maxAge:30 },
+  { id:'intern', title:'Office boy', emoji:'📨', base:26000, minAge:16, maxAge:26 },
+  { id:'cop', title:'Policial', emoji:'👮', base:54000, minAge:18, smarts:38 },
+  { id:'soccer', title:'Jogador de Futebol', emoji:'⚽', base:150000, minAge:16, maxAge:36, health:68 },
+  { id:'streamer', title:'Streamer', emoji:'📡', base:38000, minAge:16, looks:38 },
+  { id:'mafia', title:'Mafioso', emoji:'🕶️', base:96000, minAge:18, karmaMax:55 },
+  { id:'pilot', title:'Piloto', emoji:'✈️', base:125000, minAge:21, smarts:58, degree:true },
+  { id:'gamedev', title:'Desenvolvedor de Jogos', emoji:'🎮', base:102000, minAge:18, smarts:60, degreeAny:['cc','eng'] },
+  { id:'actor', title:'Ator', emoji:'🎬', base:78000, minAge:16, looks:64 },
+  { id:'doctor', title:'Médico', emoji:'🩺', base:198000, minAge:24, smarts:70, degree:'medicina' },
+  { id:'judge', title:'Juiz', emoji:'⚖️', base:176000, minAge:28, smarts:74, degree:'direito' },
+  { id:'ceo', title:'CEO', emoji:'💼', base:280000, minAge:26, smarts:76, boss:true }
+];
+const GIGS = [
+  { id:'delivery', name:'Entregador', emoji:'🛵', min:250, max:900, minAge:16 },
+  { id:'dogs', name:'Passeador de cães', emoji:'🐕', min:180, max:700, minAge:14 },
+  { id:'dev', name:'Programador freelancer', emoji:'💻', min:900, max:5200, minAge:16, smarts:55 }
+];
+const PROPERTIES = [
+  { id:'kit', name:'Quitinete', emoji:'🏢', price:90000, rent:7000 },
+  { id:'sub', name:'Casa suburbana', emoji:'🏡', price:240000, rent:15000 },
+  { id:'apt', name:'Apartamento', emoji:'🏙️', price:390000, rent:24000 },
+  { id:'cob', name:'Cobertura', emoji:'🌆', price:1250000, rent:72000 },
+  { id:'man', name:'Mansão', emoji:'🏰', price:3600000, rent:190000 },
+  { id:'farm', name:'Fazenda', emoji:'🌾', price:1850000, rent:95000 },
+  { id:'castle', name:'Castelo', emoji:'🏯', price:14500000, rent:420000 },
+  { id:'loft', name:'Loft industrial', emoji:'🧱', price:520000, rent:31000 }
+];
+const VEHICLES = [
+  { id:'pop', name:'Carro popular', emoji:'🚗', price:18000 },
+  { id:'sedan', name:'Sedan executivo', emoji:'🚙', price:46000 },
+  { id:'sport', name:'Esportivo', emoji:'🏎️', price:190000 },
+  { id:'super', name:'Supercarro', emoji:'🏁', price:480000 },
+  { id:'moto', name:'Moto esportiva', emoji:'🏍️', price:24000 },
+  { id:'heli', name:'Helicóptero', emoji:'🚁', price:1600000 },
+  { id:'jet', name:'Jatinho particular', emoji:'🛩️', price:8200000 },
+  { id:'yacht', name:'Superiate', emoji:'🛥️', price:12500000 }
+];
+const STREET = [
+  { id:'old', name:'Hatch velho', emoji:'🚗', chance:0.72, loot:6000, years:1 },
+  { id:'daily', name:'Sedan do quarteirão', emoji:'🚙', chance:0.55, loot:18000, years:2 },
+  { id:'night', name:'Esportivo estacionado', emoji:'🏎️', chance:0.34, loot:70000, years:4 },
+  { id:'valet', name:'Supercarro do valet', emoji:'🏁', chance:0.18, loot:240000, years:6 }
+];
+const ISLANDS = [
+  { id:'tropical', name:'Ilha tropical', emoji:'🏝️', price:6200000 },
+  { id:'volcano', name:'Ilha vulcânica', emoji:'🌋', price:4700000 },
+  { id:'ice', name:'Ilha glacial', emoji:'🧊', price:3100000 },
+  { id:'arch', name:'Arquipélago privado', emoji:'🌴', price:26000000 }
+];
+const GOODS = [
+  { id:'watch', name:'Relógio raro', emoji:'⌚', price:28000 },
+  { id:'diamond', name:'Colar de diamantes', emoji:'💎', price:125000 },
+  { id:'phone', name:'Smartphone dobrável', emoji:'📱', price:2400 },
+  { id:'card', name:'Carta colecionável', emoji:'🃏', price:16000 },
+  { id:'guitar', name:'Guitarra vintage', emoji:'🎸', price:8400 },
+  { id:'laptop', name:'Notebook pro', emoji:'💻', price:3800 },
+  { id:'ring', name:'Anel de esmeralda', emoji:'💍', price:54000 },
+  { id:'statue', name:'Miniatura assinada', emoji:'🗿', price:4300 }
+];
+const LOTS = [
+  { id:'portrait', name:'Retrato quase famoso', emoji:'🖼️', base:85000 },
+  { id:'classic', name:'Clássico de 1964', emoji:'🚙', base:160000, car:true },
+  { id:'relic', name:'Relíquia do império', emoji:'🏺', base:64000 },
+  { id:'meteor', name:'Meteorito', emoji:'☄️', base:130000 },
+  { id:'box', name:'Caixa misteriosa', emoji:'📦', base:18000, mystery:true },
+  { id:'vase', name:'Vaso dinástico', emoji:'⚱️', base:48000 },
+  { id:'crown', name:'Coroa menor', emoji:'👑', base:540000 },
+  { id:'stage', name:'Guitarra de palco', emoji:'🎸', base:32000 }
+];
+const PETS = [
+  { id:'dog', name:'Cão', emoji:'🐶', cost:800, upkeep:500, joy:6, life:15 },
+  { id:'cat', name:'Gato', emoji:'🐱', cost:500, upkeep:350, joy:5, life:16 },
+  { id:'capy', name:'Capivara', emoji:'🦫', cost:2800, upkeep:1100, joy:10, life:12 },
+  { id:'parrot', name:'Papagaio', emoji:'🦜', cost:1400, upkeep:400, joy:4, life:30 },
+  { id:'tiger', name:'Tigre', emoji:'🐯', cost:80000, upkeep:9000, joy:14, life:18 }
+];
+const DISEASES = [
+  { id:'flu', name:'Gripe', dmg:4 },
+  { id:'back', name:'Dor nas costas', dmg:3 },
+  { id:'anx', name:'Ansiedade', dmg:2, happy:-5 },
+  { id:'heart', name:'Sopro cardíaco', dmg:7 }
+];
+const STOCK_DEFS = [
+  { id:'NEX', name:'Nexus Tech', risk:'low', price:120, crypto:false },
+  { id:'ORB', name:'Orbital Energia', risk:'low', price:84, crypto:false },
+  { id:'PUL', name:'Pulso Alimentos', risk:'med', price:46, crypto:false },
+  { id:'VLT', name:'Voltagem Motors', risk:'med', price:67, crypto:false },
+  { id:'NOVA', name:'NovaCoin', risk:'high', price:240, crypto:true },
+  { id:'LUNA', name:'Lunária', risk:'high', price:18, crypto:true },
+  { id:'GHOST', name:'GhostChain', risk:'high', price:3.4, crypto:true }
+];
+const CRIMES = [
+  { id:'pick', name:'Bater carteira', emoji:'👛', minAge:14, chance:0.62, min:40, max:600, heat:8, karma:4, years:1, tech:false, win:'Você esvaziou um bolso distraído', lose:'A vítima segurou seu pulso.', feed:'👛 Seu amigo bateu carteira por aí' },
+  { id:'shop', name:'Roubar loja', emoji:'🏪', minAge:16, chance:0.48, min:400, max:6000, heat:16, karma:8, years:2, win:'O caixa da loja foi para o seu bolso', lose:'O alarme da loja disparou.', feed:'🏪 Seu amigo roubou uma loja' },
+  { id:'atm', name:'Hackear caixa', emoji:'🏧', minAge:16, chance:0.4, min:800, max:12000, heat:18, karma:7, years:3, tech:true, win:'O caixa eletrônico cuspiu notas', lose:'O banco rastreou o seu sinal.', feed:'🏧 Seu amigo hackeou um caixa eletrônico' },
+  { id:'train', name:'Assaltar trem', emoji:'🚆', minAge:18, chance:0.36, min:2000, max:25000, heat:24, karma:10, years:4, win:'Você desceu do trem mais rico', lose:'A segurança do trem te cercou.', feed:'🚆 Seu amigo assaltou um trem' },
+  { id:'bank', name:'Assalto a banco', emoji:'🏦', minAge:18, chance:0.26, min:40000, max:280000, heat:40, karma:16, years:8, win:'O cofre abriu', lose:'A polícia cercou o banco.', feed:'🚨 Seu amigo tentou roubar um banco' }
+];
+
+function applyFx(p, fx) {
+  if (!fx) return;
+  if (fx.money) p.money += fx.money;
+  for (const k of ['happiness','health','smarts','looks','karma']) if (fx[k]) p[k] += fx[k];
+  if (fx.heat) p.heat += fx.heat;
+  if (fx.disease) addDisease(p, fx.disease);
+  clampVitals(p);
+}
+function ch(t, log, apply, kind) { return { t, log, apply, kind: kind || 'info' }; }
+function s(fx, kind) { return (p) => applyFx(p, fx); }
+
+const EVENTS = [
+  { id:'tooth', min:0, max:4, shared:true, title:'Primeiro dente', text:'Um dentinho novo apareceu no meio do sorriso.', choices:[
+    ch('Mostrar para a família', 'A casa inteira comemorou o dentinho.', s({happiness:6})),
+    ch('Chorar a noite inteira', 'Ninguém dormiu direito.', s({happiness:-3, health:-2})),
+    ch('Morder tudo', 'Berço, dedos e a sorte.', s({happiness:3}))
+  ]},
+  { id:'park', min:3, max:8, shared:true, title:'Tarde no parque', text:'Tem pipa, sorvete e um cachorro enorme sem coleira.', choices:[
+    ch('Brincar até o sol sumir', 'Você voltou sujo e feliz.', s({happiness:7, health:2})),
+    ch('Ficar no colo', 'Seguro, mas sem história.', s({happiness:1})),
+    ch('Correr atrás do cachorro', 'Ele lambeu sua cara. Sua família não esperava isso.', s({happiness:5, health:-1}))
+  ]},
+  { id:'bully', min:7, max:14, shared:true, need:'school', title:'Recreio complicado', text:'Alguém escondeu seu lanche e chamou a plateia.', choices:[
+    ch('Responder com piada', 'A roda riu com você, não de você.', s({happiness:4, smarts:1, karma:1})),
+    ch('Partir para a briga', 'O pátio virou ringue.', s({health:-8, karma:-6, happiness:-2})),
+    ch('Contar para um adulto', 'O problema parou. Alguns colegas fizeram cara feia.', s({karma:6, happiness:-1})),
+    ch('Fingir que não doeu', 'Do eu por dentro, doeu.', s({happiness:-6}))
+  ]},
+  { id:'quiz', min:8, max:17, need:'school', title:'Prova surpresa', text:'O professor chegou sem avisar, com uma pilha de folhas.', choices:[
+    ch('Resolver com calma', 'Algumas questões eram até interessantes.', s({smarts:6, happiness:-1})),
+    ch('Colar do colega', 'Funcionou… desta vez.', s({smarts:-2, karma:-6, happiness:2})),
+    ch('Entregar em branco', 'Uma declaração de independência sem nota.', s({smarts:-4, happiness:1, karma:-1}))
+  ]},
+  { id:'party', min:15, max:24, shared:true, title:'Festa até tarde', text:'A música está alta e alguém pergunta se você fica.', choices:[
+    ch('Ficar e dançar', 'Você chegou em casa com o sol.', s({happiness:8, health:-4, smarts:-1})),
+    ch('Ir embora cedo', 'O travesseiro agradeceu.', s({health:3, happiness:-1})),
+    ch('Cuidar de quem passou mal', 'Você virou o adulto da noite.', s({karma:8, happiness:2}))
+  ]},
+  { id:'wallet', min:14, max:70, shared:true, title:'Carteira no chão', text:'Um maço de dinheiro está ao lado de um banco de praça. Tem um documento dentro.', choices:[
+    ch('Devolver', 'A pessoa quase chora de alívio.', s({karma:10, happiness:4})),
+    ch('Ficar com o dinheiro', 'O documento foi para o lixo.', s({money:650, karma:-12, heat:6}), 'crime'),
+    ch('Entregar na polícia', 'Você saiu com a consciência leve e um formulário.', s({karma:8}))
+  ]},
+  { id:'flu', min:6, max:90, title:'Corpo mole', text:'Febre, cobertor e uma série que você não escolheu.', choices:[
+    ch('Ir ao médico agora', 'Receita, repouso e conta.', (p)=>{ p.money -= Math.round(400*country().col); p.health += 8; }),
+    ch('Trabalhar doente', 'Você foi, mas o corpo cobrou.', s({health:-8, happiness:-3})),
+    ch('Dormir três dias', 'O mundo esperou.', s({health:6, happiness:2}))
+  ]},
+  { id:'boss', min:18, max:70, need:'job', title:'Chefe de mau humor', text:'A meta mudou na sexta e a culpa, segundo o chefe, é sua.', choices:[
+    ch('Argumentar com números', 'Ele resmungou e recuou.', (p)=>{ if (p.job) p.job.perf = clamp(p.job.perf+8,0,100); p.happiness -= 2; }),
+    ch('Engolir', 'O nó ficou no estômago.', s({happiness:-6})),
+    ch('Pedir demissão na hora', 'A porta bateu mais alto que a sua voz.', (p)=>{ p.job=null; p.happiness += 4; p.money -= 200; })
+  ]},
+  { id:'uncle', min:18, max:75, title:'Dica de investimento', text:'Um tio jura que uma moeda nova vai “explodir” até sexta.', choices:[
+    ch('Colocar uma grana', 'Você entrou no jogo.', (p)=>{ const n=Math.min(p.money, 2000); if(n>0){ p.money-=n; const id='LUNA'; const s0=G.market.find(x=>x.id===id); const sh=n/s0.price; const h=p.stocks[id]||{shares:0,avg:0}; h.avg=(h.avg*h.shares+n)/(h.shares+sh); h.shares+=sh; p.stocks[id]=h; } }),
+    ch('Agradecer e passar', 'O tio ficou ofendido por uma semana.', s({karma:1})),
+    ch('Dar uma palestra', 'Você explicou risco. Ele chamou você de medroso.', s({smarts:2, happiness:-1}))
+  ]},
+  { id:'crash', min:18, max:80, title:'Cruzamento', text:'Um carro avançou o sinal. Você estava no meio.', choices:[
+    ch('Frear e xingar', 'Susto grande, osso inteiro.', s({health:-6, happiness:-4})),
+    ch('Anotar a placa', 'A reclamação foi parar no lugar certo.', s({karma:4, happiness:-1})),
+    ch('Ignorar e seguir', 'O coração demorou a baixar.', s({health:-3, happiness:-2}))
+  ]},
+  { id:'trip', min:16, max:70, shared:true, title:'Fim de semana fora', text:'Alguém oferece uma carona para o litoral. A conta da gasolina é dividida.', choices:[
+    ch('Ir', 'Água salgada cura quase tudo.', s({happiness:10, money:-350, health:2})),
+    ch('Ficar e descansar', 'Silêncio também é férias.', s({happiness:3, health:3})),
+    ch('Oferecer sua casa', 'A viagem veio até você.', s({happiness:4, karma:3, money:-120}))
+  ]},
+  { id:'lottery', min:18, max:90, title:'Bilhete amassado', text:'Você achou um bilhete de loteria no bolso de um casaco velho.', choices:[
+    ch('Conferir o resultado', 'Não foi o prêmio máximo, mas também não foi nada.', (p)=>{ const n=rand(0,1)?0:rand(200,5000); p.money+=n; p._note=n?('Você ganhou '+money(n)+'.'):'Não foi desta vez.'; }),
+    ch('Dar o bilhete', 'A outra pessoa gritou no meio da rua.', s({karma:8, happiness:3})),
+    ch('Esquecer', 'O casaco voltou para o armário.', s({happiness:-1}))
+  ]},
+  { id:'scandal', min:20, max:70, title:'Mensagem vazada', text:'Um print seu está circulando sem contexto.', choices:[
+    ch('Explicar em público', 'Parte das pessoas acreditou.', s({happiness:-4, karma:2, looks:-2})),
+    ch('Sumir por uma semana', 'O assunto esfriou.', s({happiness:-2, smarts:1})),
+    ch('Processar o fofoqueiro', 'Custou caro e fez barulho.', (p)=>{ p.money-=1500; p.karma+=3; p.happiness-=2; })
+  ]},
+  { id:'festival', min:10, max:80, shared:true, title:'Festa da cidade', text:'A rua fechou. Tem música, fila e cheiro de comida.', choices:[
+    ch('Comer de tudo', 'Feliz e ligeiramente arrependido.', s({happiness:6, health:-2, money:-80})),
+    ch('Subir no palco aberto', 'Trinta segundos de fama local.', s({happiness:5, looks:2})),
+    ch('Ajudar na barraca', 'Você saiu com um avental e um obrigado.', s({karma:6, happiness:3}))
+  ]},
+  { id:'blackout', min:8, max:90, shared:true, title:'Apagão', text:'A cidade inteira ficou no escuro por algumas horas.', choices:[
+    ch('Jogar conversa fora', 'Velas e histórias antigas.', s({happiness:5})),
+    ch('Sair para ver a rua', 'As estrelas apareceram no meio dos prédios.', s({happiness:3, smarts:1})),
+    ch('Tentar vender lanternas', 'Negócio rápido de calçada.', (p)=>{ p.money+=rand(50,400); p.karma-=1; })
+  ]},
+  { id:'heir', min:25, max:80, title:'Parente distante', text:'Um cartório ligou. Tem herança, tem papelada, tem primo que você nunca viu.', choices:[
+    ch('Aceitar e dividir', 'Menos dinheiro, zero briga.', (p)=>{ p.money+=rand(2000,20000); p.karma+=4; }),
+    ch('Ficar com tudo', 'O primo não manda mais mensagem.', (p)=>{ p.money+=rand(8000,40000); p.karma-=8; p.happiness-=2; }),
+    ch('Recusar', 'Você dormiu leve.', s({karma:6, happiness:2}))
+  ]},
+  { id:'viral', min:16, max:40, title:'Vídeo improvável', text:'Alguém filmou você e o clipe passou de milhares.', choices:[
+    ch('Entrar na brincadeira', 'Seguidores novos e um pouco de cansasso.', s({happiness:6, looks:3})),
+    ch('Pedir para apagar', 'Quase ninguém apagou.', s({happiness:-3})),
+    ch('Monetizar na hora', 'Deu um dinheiro curto de anúncio.', (p)=>{ p.money+=rand(300,4000); p.happiness+=2; })
+  ]},
+  { id:'storm', min:12, max:90, shared:true, title:'Temporal', text:'A chuva entrou pela janela e levou um pouco do seu dia junto.', choices:[
+    ch('Proteger a casa', 'Toalhas no chão, telhado salvo.', s({happiness:-1, health:-2, karma:1})),
+    ch('Ajudar o vizinho', 'Vocês dividiram o balde.', s({karma:7, happiness:2})),
+    ch('Filmar tudo', 'O vídeo ficou dramático.', s({happiness:1, looks:1}))
+  ]},
+  { id:'checkup', min:30, max:90, title:'Check-up', text:'O médico pediu exames e fez aquela cara que não entrega o resultado.', choices:[
+    ch('Fazer todos os exames', 'Prevenção custa, mas informa.', (p)=>{ p.money-=Math.round(900*country().col); p.health+=7; }),
+    ch('Adiar', 'O envelope ficou na gaveta.', s({health:-4, happiness:-2})),
+    ch('Mudar o prato e a rotina', 'Menos pressa, mais salada.', s({health:5, happiness:1}))
+  ]},
+  { id:'shady', min:18, max:60, title:'Proposta esquisita', text:'Um desconhecido oferece dinheiro para “segurar um pacote até amanhã”.', choices:[
+    ch('Recusar na hora', 'Você atravessou a rua.', s({karma:5})),
+    ch('Aceitar', 'O pacote pesava menos que a culpa.', (p)=>{ p.money+=rand(1500,8000); p.karma-=10; p.heat+=18; p.crimes++; }),
+    ch('Avisar a polícia', 'Você deu as características e foi para casa.', s({karma:8, heat:-4}))
+  ]},
+  { id:'scout', min:16, max:28, title:'Olheiro', text:'Alguém do esporte amador diz que você tem jeito.', choices:[
+    ch('Treinar sério', 'O corpo responde.', s({health:8, happiness:3, looks:1})),
+    ch('Pedir contrato na brincadeira', 'Riram, mas anotaram seu nome.', s({happiness:2})),
+    ch('Dizer que prefere o sofá', 'O sofá concordou.', s({health:-2, happiness:1}))
+  ]}
+];
+
+class SoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = localStorage.getItem('vd-mute') === '1';
+    this.volume = Number(localStorage.getItem('vd-vol') ?? '0.32');
+  }
+  ensure() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!this.ctx) this.ctx = new AC();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  }
+  bus() {
+    const ctx = this.ensure();
+    const g = ctx.createGain();
+    g.gain.value = this.muted ? 0 : this.volume;
+    g.connect(ctx.destination);
+    return { ctx, g };
+  }
+  tone(freq, dur, type, gain, delay, slide) {
+    const { ctx, g } = this.bus();
+    const t = ctx.currentTime + (delay || 0);
+    const o = ctx.createOscillator();
+    const gg = ctx.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, freq + slide), t + dur);
+    gg.gain.setValueAtTime(0.0001, t);
+    gg.gain.exponentialRampToValueAtTime(gain, t + 0.015);
+    gg.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(gg); gg.connect(g);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  noise(dur, gain, delay, freq) {
+    const { ctx, g } = this.bus();
+    const t = ctx.currentTime + (delay || 0);
+    const n = Math.max(1, Math.floor(ctx.sampleRate * dur));
+    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = freq || 240;
+    const gg = ctx.createGain();
+    gg.gain.value = gain;
+    src.connect(filter); filter.connect(gg); gg.connect(g);
+    src.start(t); src.stop(t + dur);
+  }
+  click() { this.tone(540, 0.06, 'sine', 0.12); this.tone(820, 0.05, 'triangle', 0.06, 0.02); }
+  age() { [523, 659, 784, 1046].forEach((f, i) => this.tone(f, 0.14, 'triangle', 0.1, i * 0.07)); }
+  cash() { this.tone(1760, 0.08, 'square', 0.05); this.tone(2340, 0.12, 'square', 0.04, 0.09); }
+  siren() {
+    const { ctx, g } = this.bus();
+    const o = ctx.createOscillator();
+    const gg = ctx.createGain();
+    o.type = 'sawtooth';
+    const t = ctx.currentTime;
+    for (let i = 0; i < 8; i++) o.frequency.setValueAtTime(i % 2 ? 640 : 920, t + i * 0.16);
+    gg.gain.setValueAtTime(0.05, t);
+    gg.gain.exponentialRampToValueAtTime(0.0001, t + 1.25);
+    o.connect(gg); gg.connect(g);
+    o.start(t); o.stop(t + 1.3);
+  }
+  gavel() { this.noise(0.08, 0.35, 0, 160); this.tone(130, 0.12, 'sine', 0.28); }
+  success() { [523, 659, 784].forEach(f => this.tone(f, 0.4, 'triangle', 0.08)); }
+  fail() { this.tone(210, 0.32, 'sawtooth', 0.07, 0, -120); }
+  death() {
+    this.tone(180, 0.7, 'sine', 0.18, 0, -70);
+    this.tone(90, 1.1, 'triangle', 0.12, 0.15);
+    [0.45, 0.8, 1.25, 1.85].forEach((d, i) => this.tone(68, 0.12, 'sine', 0.16 - i * 0.03, d));
+  }
+}
+const SFX = new SoundEngine();
+
+const G = {
+  screen: 'menu',
+  tab: 'work',
+  theme: localStorage.getItem('vd-theme') || 'dark',
+  layout: localStorage.getItem('vd-layout') || 'auto',
+  turnMode: 'sync',
+  modal: null,
+  modalQueue: [],
+  log: [],
+  player: null,
+  friend: null,
+  draft: null,
+  market: [],
+  marketEpoch: 0,
+  room: 'SOLO',
+  ready: { me:false, pal:false },
+  waitYear: false,
+  auction: null,
+  heist: null,
+  yearLock: false,
+  inbox: [],
+  epitaph: null,
+  afterlife: false,
+  table: null,
+  mp: blankMp()
+};
+
+function blankMp() { return { on:false, isHost:false, code:'', status:'', peer:null, conn:null, greeted:false }; }
+function uid() { return Math.random().toString(36).slice(2, 9); }
+function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+function rand(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function money(n) {
+  const v = Math.round(Number(n) || 0);
+  return (v < 0 ? '-' : '') + '$' + Math.abs(v).toLocaleString('pt-BR');
+}
+function hash(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function country() { return COUNTRIES.find(c => c.id === G.player?.countryId) || COUNTRIES[0]; }
+function mySide() { return !G.mp.on ? 'local' : (G.mp.isHost ? 'host' : 'guest'); }
+function pushLog(text, kind) {
+  G.log.unshift({ age: G.player ? G.player.age : '', text, kind: kind || 'info', who:'me' });
+  if (G.log.length > 120) G.log.pop();
+}
+function toast(text) {
+  const n = document.createElement('div');
+  n.className = 'toast';
+  n.textContent = text;
+  document.getElementById('toasts').appendChild(n);
+  setTimeout(() => n.remove(), 3400);
+}
+function confetti() {
+  const fx = document.getElementById('fx');
+  const colors = ['#ff2bd6','#2ee9ff','#ffe14a','#3dff9a','#8b7cff','#ff6b7d'];
+  for (let i = 0; i < 70; i++) {
+    const d = document.createElement('i');
+    d.className = 'confetti';
+    d.style.left = Math.random() * 100 + '%';
+    d.style.background = colors[i % colors.length];
+    d.style.animationDelay = (Math.random() * 0.25) + 's';
+    d.style.setProperty('--r', (Math.random() * 360) + 'deg');
+    fx.appendChild(d);
+    setTimeout(() => d.remove(), 2000);
+  }
+}
+function flash() {
+  document.documentElement.classList.add('alarm');
+  setTimeout(() => document.documentElement.classList.remove('alarm'), 1600);
+}
+function pushModal(m) {
+  if (!G.modal) G.modal = m;
+  else G.modalQueue.push(m);
+}
+function closeModal() { G.modal = G.modalQueue.shift() || null; }
+function send(msg) {
+  const c = G.mp.conn;
+  if (c && c.open) c.send(msg);
+}
+function freshMarket() {
+  G.market = STOCK_DEFS.map(s => ({ ...s, prev:s.price }));
+  G.marketEpoch = 0;
+}
+function clampVitals(p) {
+  for (const k of ['happiness','smarts','looks','karma']) p[k] = clamp(Math.round(p[k]), 0, 100);
+  p.health = clamp(Math.round(p.health), 0, 100);
+  p.heat = clamp(Math.round(p.heat || 0), 0, 100);
+}
+function addDisease(p, id) {
+  if (p.conditions.some(c => c.id === id) || p.conditions.length >= 3) return;
+  const d = DISEASES.find(x => x.id === id);
+  if (d) p.conditions.push({ id:d.id, name:d.name });
+}
+function netWorth(p = G.player) {
+  if (!p) return 0;
+  let n = p.money + p.savings;
+  n += p.properties.reduce((a, x) => a + x.value, 0);
+  n += p.vehicles.reduce((a, x) => a + x.value * (x.stolen ? 0.4 : 0.72), 0);
+  n += p.islands.reduce((a, x) => a + x.value, 0);
+  n += p.items.reduce((a, x) => a + x.price * 0.8, 0);
+  for (const [id, h] of Object.entries(p.stocks)) {
+    const s = G.market.find(x => x.id === id);
+    if (s) n += h.shares * s.price;
+  }
+  if (p.loan) n -= p.loan.principal;
+  return Math.round(n);
+}
+function pub(p) {
+  return {
+    first:p.first, last:p.last, age:p.age, gender:p.gender, city:p.city, countryId:p.countryId,
+    money:p.money, savings:p.savings, debt:p.loan ? p.loan.principal : 0,
+    happiness:p.happiness, health:p.health, smarts:p.smarts, looks:p.looks, karma:p.karma,
+    job: p.job ? { title:p.job.title, salary:annualPay(p), level:p.job.level, emoji:p.job.emoji } : null,
+    prison: p.inPrison ? p.sentence : 0,
+    alive:p.alive, ghost:!!p.ghost, net:netWorth(p), talent:p.talent,
+    skin:p.skin, hair:p.hair, crimes:p.crimes,
+    vehicles: p.vehicles.map(v => ({ id:v.id, name:v.name, emoji:v.emoji })),
+    married: p.relations.some(r => r.role === 'spouse' && r.alive)
+  };
+}
+function stageEmoji(p) {
+  if (!p || p.ghost || p.alive === false) return '👻';
+  if (p.age < 3) return '👶';
+  if (p.age < 13) return p.gender === 'f' ? '👧' : p.gender === 'm' ? '👦' : '🧒';
+  if (p.age < 60) return p.gender === 'f' ? '👩' : p.gender === 'm' ? '👨' : '🧑';
+  return p.gender === 'f' ? '👵' : p.gender === 'm' ? '👴' : '🧓';
+}
+function faceSVG(p, size) {
+  const skin = ['#f3d2b5','#e0ac84','#c68642','#8d5524','#5a3317'][p.skin % 5];
+  const hair = ['#1c1c1c','#6b3e1e','#e0b354','#8d2f39','#245c43','#d5d5d5'][p.hair % 6];
+  const old = (p.age || 0) > 64;
+  const baby = (p.age || 0) < 4;
+  const eye = baby ? 4.2 : 3.2;
+  return `<svg viewBox="0 0 80 80" width="${size||64}" height="${size||64}" aria-hidden="true">
+    <circle cx="40" cy="40" r="38" fill="${skin}"/>
+    <path d="M12 38 Q40 ${baby?6:14} 68 38 Q66 16 40 12 Q14 16 12 38" fill="${hair}"/>
+    <circle cx="30" cy="42" r="${eye}" fill="#1b1b1b"/>
+    <circle cx="50" cy="42" r="${eye}" fill="#1b1b1b"/>
+    ${old ? '<path d="M24 34 h12 M44 34 h12" stroke="#7a5a48" stroke-width="1"/>' : ''}
+    <path d="M32 56 Q40 62 48 56" stroke="#7a3b3b" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+function priceOf(base) { return Math.round(base * country().col); }
+function qualifies(p, c) {
+  if (!p.alive || p.ghost || p.inPrison) return false;
+  if (p.age < (c.minAge || 0)) return false;
+  if (c.maxAge && p.age > c.maxAge) return false;
+  if (c.smarts && p.smarts < c.smarts) return false;
+  if (c.looks && p.looks < c.looks) return false;
+  if (c.health && p.health < c.health) return false;
+  if (c.karmaMax != null && p.karma > c.karmaMax) return false;
+  if (c.degree === true && !p.edu.degree) return false;
+  if (typeof c.degree === 'string' && p.edu.degree !== c.degree) return false;
+  if (c.degreeAny && !c.degreeAny.includes(p.edu.degree)) return false;
+  if (c.boss && !(p.edu.degree || p.money > 250000 || p.peak > 250000)) return false;
+  return true;
+}
+function hire(p, id) {
+  const c = CAREERS.find(x => x.id === id);
+  if (!c || !qualifies(p, c) || p.job) return false;
+  p.job = { id:c.id, title:c.title, emoji:c.emoji, base:c.base, level:1, perf:62, years:0, raised:false };
+  return true;
+}
+function annualPay(p = G.player) {
+  if (!p?.job || p.inPrison) return 0;
+  const ctry = COUNTRIES.find(c => c.id === p.countryId) || COUNTRIES[0];
+  let sal = p.job.base * (1 + (p.job.level - 1) * 0.16);
+  if (p.talent === 'tech' && (p.job.id === 'gamedev' || p.job.id === 'streamer')) sal *= 1.18;
+  if (p.talent === 'sports' && p.job.id === 'soccer') sal *= 1.25;
+  if (p.talent === 'music' && (p.job.id === 'actor' || p.job.id === 'streamer')) sal *= 1.16;
+  if (p.talent === 'crime' && p.job.id === 'mafia') sal *= 1.28;
+  if (p.talent === 'finance' && p.job.id === 'ceo') sal *= 1.15;
+  sal *= ctry.sal;
+  return Math.round(sal * (1 - ctry.tax));
+}
+function spouseOf(p = G.player) { return p.relations.find(r => r.role === 'spouse' && r.alive); }
+function findRel(id) { return G.player.relations.find(r => r.id === id); }
+function spendAction() {
+  if (G.player.actions >= 6) { toast('Você já gastou a energia deste ano.'); return false; }
+  G.player.actions++;
+  return true;
+}
+function assertLiving() {
+  if (!G.player?.alive) { toast('Esta vida já acabou.'); return false; }
+  if (G.player.ghost) { toast('Fantasmas não fazem isso. Assombre ou dê sorte.'); return false; }
+  return true;
+}
+function syncFriendRelation() {
+  if (!G.player || !G.friend) return;
+  let r = G.player.relations.find(x => x.isPlayer);
+  const name = (G.friend.first || 'Amigo') + ' ' + (G.friend.last || '');
+  if (!r) {
+    G.player.relations.unshift({ id:'duo', isPlayer:true, role: G.player.marriedToPlayer ? 'spouse' : 'friend', name, gender:G.friend.gender || 'x', age:G.friend.age || 0, bond:50, alive:!!G.friend.alive });
+  } else {
+    r.name = name;
+    r.age = G.friend.age || r.age;
+    r.gender = G.friend.gender || r.gender;
+    r.alive = !!G.friend.alive && !G.friend.ghost;
+  }
+}
+function changed() {
+  if (G.player && G.player.alive) {
+    const n = netWorth();
+    const prev = G.player.peak || 0;
+    if (prev < 1000000 && n >= 1000000) {
+      confetti(); SFX.success();
+      pushLog('Sua fortuna passou de um milhão.', 'money');
+      if (G.mp.on) send({ t:'feed', text:'🏝️ Seu amigo ficou milionário!', kind:'money' });
+    }
+    if (n > G.player.peak) G.player.peak = n;
+  }
+  render();
+  if (G.mp.on && G.player) send({ t:'snap', p: pub(G.player) });
+}
+function narrate(selfText, friendText, kind) {
+  pushLog(selfText, kind || 'info');
+  if (friendText && G.mp.on) send({ t:'feed', text: friendText, kind: kind || 'info' });
+  changed();
+}
+function rollMarket() {
+  G.marketEpoch++;
+  const rng = mulberry32(hash((G.room || 'SOLO') + ':' + G.marketEpoch));
+  for (const s of G.market) {
+    s.prev = s.price;
+    const vol = s.risk === 'low' ? 0.08 : s.risk === 'med' ? 0.18 : 0.42;
+    s.price = Math.max(0.2, +(s.price * (1 + (rng() * 2 - 1) * vol)).toFixed(2));
+  }
+  return { epoch:G.marketEpoch, prices:G.market.map(s => ({ id:s.id, price:s.price, prev:s.prev })) };
+}
+function applyPrices(pack) {
+  if (!pack || pack.epoch <= G.marketEpoch) return false;
+  G.marketEpoch = pack.epoch;
+  for (const row of pack.prices) {
+    const s = G.market.find(x => x.id === row.id);
+    if (s) { s.prev = row.prev; s.price = row.price; }
+  }
+  return true;
+}
+function sharedEventFor(age, otherAge) {
+  if (!G.mp.on || otherAge == null || Math.abs(age - otherAge) > 5) return null;
+  const pool = EVENTS.filter(e => e.shared && age >= e.min && age <= e.max);
+  if (!pool.length) return null;
+  const rng = mulberry32(hash(G.room + ':share:' + G.marketEpoch + ':' + age));
+  return pool[Math.floor(rng() * pool.length)].id;
+}
+
+function randomDraft() {
+  const gender = pick(['m','f','x']);
+  const countryId = 'br';
+  return {
+    first: pick(FIRST[gender]), last: pick(LAST), gender, countryId,
+    city: 'São Paulo', skin: rand(0,4), hair: rand(0,5), talent: pick(TALENTS).id
+  };
+}
+function captureDraft() {
+  const f = document.getElementById('f-first');
+  if (!f || !G.draft) return;
+  G.draft.first = f.value;
+  G.draft.last = document.getElementById('f-last').value;
+  G.draft.gender = document.getElementById('f-gender').value;
+  G.draft.countryId = document.getElementById('f-country').value;
+  G.draft.city = document.getElementById('f-city').value;
+  G.draft.talent = document.getElementById('f-talent').value;
+}
+function makePerson(role, gender, age, extra) {
+  return Object.assign({ id:uid(), role, gender, age, name: pick(FIRST[gender] || FIRST.x), bond: role === 'parent' ? 75 : role === 'sibling' ? 55 : 40, alive:true }, extra || {});
+}
+function createLife(startAge) {
+  const d = G.draft;
+  const gender = d.gender;
+  const p = {
+    first: d.first.trim().slice(0, 18) || 'Sem Nome',
+    last: d.last.trim().slice(0, 18) || 'Anônimo',
+    gender, countryId: d.countryId, city: d.city,
+    skin: d.skin, hair: d.hair, talent: d.talent,
+    age: startAge, money: startAge >= 18 ? Math.round(8000 * (COUNTRIES.find(c=>c.id===d.countryId)?.sal || 1)) : 0,
+    savings: 0, loan: null,
+    happiness: rand(62, 82), health: rand(74, 92), smarts: rand(38, 68), looks: rand(40, 75), karma: rand(52, 74),
+    heat: 0, crimes: 0, sentence: 0, inPrison: false, conditions: [],
+    edu: { stage:'none', major:null, year:0, degree:null, club:null },
+    job: null, relations: [], properties: [], vehicles: [], islands: [], items: [], stocks: {},
+    company: null, heir: null, marriedToPlayer: false, prenup: false,
+    ghost: false, alive: true, peak: 0, actions: 0, haunts: 0, lastHauntAge: -1, promotions: 0
+  };
+  if (p.talent === 'crime') p.karma -= 8;
+  if (p.talent === 'finance') p.smarts += 8;
+  if (p.talent === 'sports') p.health += 8;
+  if (p.talent === 'music') p.happiness += 6;
+  if (p.talent === 'tech') p.smarts += 8;
+  if (startAge >= 18) p.edu.stage = 'hs';
+  else if (startAge >= 12) p.edu.stage = 'high';
+  else if (startAge >= 6) p.edu.stage = 'primary';
+  const mom = makePerson('parent', 'f', rand(26, 38) + startAge);
+  const dad = makePerson('parent', 'm', mom.age + rand(-2, 4));
+  p.relations.push(mom, dad);
+  const sibs = rand(0, 2);
+  for (let i = 0; i < sibs; i++) {
+    const g = pick(['m','f']);
+    p.relations.push(makePerson('sibling', g, Math.max(0, startAge + rand(-6, 6))));
+  }
+  if (Math.random() < 0.35) {
+    const pet = pick(PETS.filter(x => x.cost < 2000));
+    p.relations.push({ id:uid(), role:'pet', name:pet.name, emoji:pet.emoji, gender:'x', age:rand(1,4), bond:70, alive:true, upkeep:pet.upkeep, joy:pet.joy, life:pet.life });
+  }
+  clampVitals(p);
+  G.player = p;
+  G.log = [];
+  G.afterlife = false;
+  G.epitaph = null;
+  G.modal = null;
+  G.modalQueue = [];
+  G.ready = { me:false, pal:false };
+  freshMarket();
+  p.peak = 0;
+  syncFriendRelation();
+  pushLog(startAge === 0 ? `Você nasceu em ${p.city}, ${country().name}.` : `Sua vida começa aos 18 em ${p.city}, ${country().name}.`, 'good');
+  pushLog(`Talento: ${TALENTS.find(t=>t.id===p.talent).name}. Família: ${mom.name} e ${dad.name}.`, 'info');
+  G.screen = 'play';
+  G.player.peak = netWorth();
+  changed();
+  const pending = G.inbox.splice(0);
+  pending.forEach(onData);
+}
+
+function progressEducation(p) {
+  if (p.age === 6 && p.edu.stage === 'none') { p.edu.stage = 'primary'; pushLog('Você entrou na escola primária.', 'good'); }
+  if (p.age === 12 && p.edu.stage === 'primary') { p.edu.stage = 'high'; pushLog('O ensino médio começou.', 'info'); }
+  if (p.age === 18 && (p.edu.stage === 'high' || p.edu.stage === 'primary')) { p.edu.stage = 'hs'; pushLog('Você concluiu a escola.', 'good'); SFX.success(); }
+  if (p.edu.stage === 'uni') {
+    const major = MAJORS.find(m => m.id === p.edu.major);
+    const fee = Math.round(major.tuition * country().col);
+    if (p.money < fee) {
+      p.edu.stage = 'hs';
+      pushLog('A mensalidade venceu você. A faculdade ficou para trás.', 'bad');
+      SFX.fail();
+    } else {
+      p.money -= fee;
+      p.edu.year++;
+      p.smarts += 3;
+      pushLog(`Ano ${p.edu.year} de ${major.name}. Mensalidade de ${money(fee)}.`, 'info');
+      if (p.edu.year >= 4) {
+        p.edu.stage = 'grad';
+        p.edu.degree = major.id;
+        pushLog('Formatura em ' + major.name + '!', 'good');
+        SFX.success(); confetti();
+      }
+    }
+  }
+}
+function earn(p) {
+  if (p.job && !p.inPrison) {
+    p.job.years++;
+    const drift = rand(-8, 14) + Math.round((p.smarts - 50) / 12);
+    p.job.perf = clamp(p.job.perf + drift, 0, 100);
+    const pay = annualPay(p);
+    p.money += pay;
+    pushLog(`${p.job.emoji} Salário de ${p.job.title}: ${money(pay)}.`, 'money');
+    if (p.job.perf >= 88 && p.job.level < 8 && Math.random() < 0.55) {
+      p.job.level++;
+      p.job.base = Math.round(p.job.base * 1.12);
+      p.job.perf = 70;
+      p.promotions++;
+      pushLog(`Promoção! ${p.job.title} agora é nível ${p.job.level}.`, 'good');
+      SFX.success(); confetti();
+      if (G.mp.on) send({ t:'feed', text:`🎉 Seu amigo foi promovido a ${p.job.title} (nível ${p.job.level}).`, kind:'good' });
+    } else if (p.job.perf < 22 && Math.random() < 0.45) {
+      pushLog(`Você foi demitido de ${p.job.title}.`, 'bad');
+      p.job = null;
+      SFX.fail();
+    }
+  }
+  for (const prop of p.properties) if (prop.rented) {
+    p.money += prop.rent;
+    pushLog(`${prop.emoji} Aluguel de ${prop.name}: ${money(prop.rent)}.`, 'money');
+  }
+  for (const isle of p.islands) if (isle.mode === 'resort') {
+    const income = Math.round(isle.value * 0.07);
+    const upkeep = Math.round(isle.value * 0.02);
+    p.money += income - upkeep;
+    pushLog(`${isle.emoji} Resort rendeu ${money(income - upkeep)} líquidos.`, 'money');
+  }
+  if (p.company) {
+    const rate = 0.08 + (p.talent === 'finance' ? 0.03 : 0) + (p.smarts - 50) / 500;
+    const gain = Math.round(p.company.invested * rate);
+    p.money += gain;
+    pushLog(`A sociedade ${p.company.name} pagou ${money(gain)}.`, 'money');
+  }
+  for (const [id, h] of Object.entries(p.stocks)) {
+    const s = G.market.find(x => x.id === id);
+    if (s && s.risk === 'low') p.money += Math.round(h.shares * s.price * 0.012);
+  }
+}
+function spendLife(p) {
+  const rate = 0.04 + (p.talent === 'finance' ? 0.02 : 0);
+  if (p.savings > 0) {
+    const before = p.savings;
+    p.savings = Math.round(p.savings * (1 + rate));
+    pushLog(`Poupança rendeu ${money(p.savings - before)}.`, 'money');
+  }
+  for (const r of p.relations) if (r.role === 'pet' && r.alive) {
+    p.money -= r.upkeep;
+    p.happiness += Math.ceil(r.joy / 2);
+  }
+  if (p.loan) {
+    const pay = Math.max(500, Math.round(p.loan.principal * 0.18));
+    if (p.money >= pay) {
+      p.money -= pay;
+      p.loan.principal = Math.round(p.loan.principal * 0.86);
+      p.loan.missed = 0;
+      pushLog(`Parcela do empréstimo: ${money(pay)}. Restam ${money(p.loan.principal)}.`, 'money');
+      if (p.loan.principal < 400) { p.loan = null; pushLog('O banco deu baixa. Você quitou a dívida.', 'good'); }
+    } else {
+      p.loan.missed++;
+      pushLog('Você não pagou o banco neste ano.', 'bad');
+      if (p.loan.missed >= 2 && p.properties.length) {
+        const seized = p.properties.pop();
+        p.loan.missed = 0;
+        p.loan.principal = Math.round(p.loan.principal * 0.55);
+        pushLog(`O banco tomou ${seized.name}.`, 'bad');
+        SFX.fail();
+      }
+    }
+  }
+  for (const c of [...p.conditions]) {
+    const d = DISEASES.find(x => x.id === c.id);
+    if (!d) continue;
+    p.health -= d.dmg;
+    if (d.happy) p.happiness += d.happy;
+  }
+  if (p.age > 58) p.health -= Math.round((p.age - 58) / 7);
+  if (p.age > 78) p.health -= 2;
+  if (p.age > 10 && p.conditions.length < 2 && Math.random() < 0.08 + Math.max(0, p.age - 50) / 400) addDisease(p, pick(DISEASES).id);
+  p.heat = clamp(p.heat - 8, 0, 100);
+}
+function ageRelations(p) {
+  for (const r of p.relations) {
+    if (!r.alive || r.isPlayer) continue;
+    r.age = (r.age || 0) + 1;
+    if (r.role === 'pet') {
+      if (r.age > r.life) { r.alive = false; p.happiness -= 12; pushLog(`${r.emoji || '🐾'} ${r.name} chegou ao fim da vida.`, 'bad'); }
+      continue;
+    }
+    if ((r.role === 'friend' || r.role === 'crush') && Math.random() < 0.35) r.bond = clamp(r.bond - 2, 0, 100);
+    const limit = r.role === 'parent' ? 86 : r.role === 'spouse' ? 92 : 100;
+    if (r.age > limit && Math.random() < (r.age - limit + 2) * 0.08) {
+      r.alive = false;
+      const close = r.role === 'parent' || r.role === 'spouse' || r.role === 'child';
+      p.happiness -= close ? 16 : 6;
+      p.health -= close ? 4 : 0;
+      pushLog(`${r.name} faleceu.`, 'bad');
+    }
+  }
+}
+function eventOk(p, e) {
+  if (p.age < e.min || p.age > e.max) return false;
+  if (e.need === 'job' && !p.job) return false;
+  if (e.need === 'school' && !['primary','high'].includes(p.edu.stage)) return false;
+  return true;
+}
+function maybeEvent(p, forced) {
+  let ev = forced && EVENTS.find(e => e.id === forced && eventOk(p, e));
+  const shared = !!ev;
+  if (!ev && Math.random() < 0.82) {
+    const pool = EVENTS.filter(e => eventOk(p, e));
+    if (pool.length) ev = pick(pool);
+  }
+  if (ev) pushModal({ type:'event', eventId: ev.id, shared });
+}
+function progressPrison(p) {
+  if (!p.inPrison) return;
+  p.sentence--;
+  if (p.sentence <= 0) {
+    p.inPrison = false;
+    p.sentence = 0;
+    pushLog('Os portões abriram. Você está livre.', 'good');
+    SFX.success();
+  } else {
+    pushLog(`Mais um ano na cadeia. Faltam ${p.sentence}.`, 'crime');
+    pushModal({ type:'prison' });
+  }
+}
+function die(cause) {
+  const p = G.player;
+  if (!p || !p.alive) return;
+  p.alive = false;
+  p.health = 0;
+  p.deathCause = cause;
+  G.epitaph = buildEpitaph();
+  G.modal = null;
+  G.modalQueue = [];
+  SFX.death();
+  pushLog('Sua vida terminou: ' + cause + '.', 'bad');
+  if (G.mp.on) send({ t:'feed', text:`💀 Seu amigo morreu aos ${p.age} anos (${cause}).`, kind:'bad' });
+  if (G.mp.on) { G.afterlife = true; G.modal = { type:'afterlife' }; G.screen = 'play'; }
+  else { G.afterlife = false; G.screen = 'grave'; }
+  changed();
+}
+function stepYear(forced) {
+  const p = G.player;
+  if (!p || !p.alive || p.ghost) return;
+  p.age++;
+  p.actions = 0;
+  if (p.job) p.job.raised = false;
+  SFX.age();
+  progressEducation(p);
+  progressPrison(p);
+  if (!p.inPrison) earn(p);
+  spendLife(p);
+  ageRelations(p);
+  clampVitals(p);
+  pushLog(`Você fez ${p.age} anos em ${p.city}.`, 'info');
+  if (p.health <= 0 || p.age >= 104 || (p.age > 87 && p.health < 32 && Math.random() < (p.age - 85) * 0.04)) {
+    die(p.health <= 0 ? 'a saúde chegou ao fim' : 'idade avançada');
+    return;
+  }
+  if (!G.modal) maybeEvent(p, forced);
+  changed();
+}
+function ribbons(p) {
+  const list = [];
+  if ((p.peak || 0) >= 1000000) list.push('Milionário');
+  if (p.properties.length >= 3 || p.properties.some(x => x.value >= 3000000)) list.push('Magnata imobiliário');
+  if (p.islands.length) list.push('Dono de ilha');
+  if (p.crimes >= 5) list.push('Mente criminosa');
+  if (p.karma >= 75 && p.crimes === 0) list.push('Cidadão modelo');
+  if (p.relations.filter(r => r.role === 'child').length >= 3) list.push('Família numerosa');
+  if ((p.promotions || 0) >= 3) list.push('Topo da carreira');
+  if (p.ghost) list.push('Além da vida');
+  if ((p.peak || 0) < 1500 && p.age > 40) list.push('Azarado');
+  if (!list.length) list.push('Uma vida inteira');
+  return list;
+}
+function buildEpitaph() {
+  const p = G.player;
+  return {
+    name: p.first + ' ' + p.last, age: p.age, cause: p.deathCause, net: netWorth(p),
+    crimes: p.crimes, kids: p.relations.filter(r => r.role === 'child').length,
+    city: p.city, ribbons: ribbons(p), job: p.job ? p.job.title : 'sem profissão no fim'
+  };
+}
+function jailRisk(years, reason) {
+  flash(); SFX.siren();
+  pushModal({ type:'lawyer', years, reason: reason || 'o que você fez' });
+  if (G.mp.on) send({ t:'feed', text:'🚨 Seu amigo se meteu com a polícia.', kind:'crime' });
+  changed();
+}
+function convict(years) {
+  const p = G.player;
+  p.inPrison = true;
+  p.sentence = years;
+  p.job = null;
+  p.heat = 70;
+  narrate(`A sentença saiu: ${years} ano(s) de prisão.`, `🚓 Seu amigo foi preso por ${years} ano(s).`, 'crime');
+}
+function tryCrime(def) {
+  if (!assertLiving()) return;
+  const p = G.player;
+  if (p.inPrison) return toast('Você já está preso.');
+  if (p.age < def.minAge) return toast('Cedo demais para esse golpe.');
+  if (!spendAction()) return;
+  let chance = def.chance;
+  if (p.talent === 'crime') chance += 0.12;
+  if (p.talent === 'tech' && def.tech) chance += 0.12;
+  if (p.islands.some(i => i.mode === 'hideout')) chance += 0.08;
+  chance += (40 - p.karma) / 500 - p.heat / 240 + p.smarts / 700;
+  chance = clamp(chance, 0.05, 0.9);
+  if (Math.random() < chance) {
+    const loot = Math.round(rand(def.min, def.max) * (0.65 + country().sal * 0.45));
+    p.money += loot;
+    p.karma = clamp(p.karma - def.karma, 0, 100);
+    p.heat = clamp(p.heat + def.heat, 0, 100);
+    p.crimes++;
+    p.happiness = clamp(p.happiness + 3, 0, 100);
+    SFX.cash();
+    narrate(`${def.emoji} ${def.win}: ${money(loot)}.`, `${def.feed}: ${money(loot)}.`, 'crime');
+  } else {
+    p.heat = clamp(p.heat + 22, 0, 100);
+    p.karma = clamp(p.karma - 6, 0, 100);
+    pushLog(def.lose, 'crime');
+    jailRisk(def.years, def.name);
+  }
+}
+function stealStreet(id) {
+  if (!assertLiving()) return;
+  const car = STREET.find(c => c.id === id);
+  const p = G.player;
+  if (p.inPrison) return toast('Você já está preso.');
+  if (!spendAction()) return;
+  let chance = car.chance + (p.talent === 'crime' ? 0.12 : 0) + (p.islands.some(i => i.mode === 'hideout') ? 0.06 : 0) - p.heat / 300;
+  if (Math.random() < clamp(chance, 0.05, 0.9)) {
+    p.vehicles.push({ uid:uid(), id:car.id, name:car.name, emoji:car.emoji, value:car.loot, stolen:true });
+    p.crimes++;
+    p.karma = clamp(p.karma - 8, 0, 100);
+    p.heat = clamp(p.heat + 16, 0, 100);
+    SFX.cash();
+    narrate(`${car.emoji} Você levou um ${car.name}. Dá para revender, com desconto de carro quente.`, `🚗 Seu amigo furtou um ${car.name}.`, 'crime');
+  } else {
+    pushLog('A tentativa de furto de ' + car.name + ' fez a sirene cantar.', 'crime');
+    jailRisk(car.years, 'furto de veículo');
+  }
+}
+function buyKind(kind, id, finance) {
+  if (!assertLiving()) return;
+  const p = G.player;
+  if (p.inPrison) return toast('Preso não assina contrato.');
+  let base, deliver, friend;
+  if (kind === 'prop') {
+    const d = PROPERTIES.find(x => x.id === id);
+    base = priceOf(d.price);
+    friend = `🏠 Seu amigo comprou ${d.name}.`;
+    deliver = () => p.properties.push({ uid:uid(), id:d.id, name:d.name, emoji:d.emoji, value:base, rent:Math.round(d.rent * country().sal), rented:false });
+  } else if (kind === 'veh') {
+    const d = VEHICLES.find(x => x.id === id);
+    base = priceOf(d.price);
+    friend = `🚗 Seu amigo comprou ${d.name}.`;
+    deliver = () => p.vehicles.push({ uid:uid(), id:d.id, name:d.name, emoji:d.emoji, value:base, stolen:false });
+  } else if (kind === 'island') {
+    const d = ISLANDS.find(x => x.id === id);
+    base = priceOf(d.price);
+    friend = `🏝️ Seu amigo comprou uma ilha: ${d.name}!`;
+    deliver = () => p.islands.push({ uid:uid(), id:d.id, name:d.name, emoji:d.emoji, value:base, mode:'idle' });
+  } else {
+    const d = GOODS.find(x => x.id === id);
+    base = priceOf(d.price);
+    friend = `🎁 Seu amigo comprou ${d.name}.`;
+    deliver = () => p.items.push({ uid:uid(), id:d.id, name:d.name, emoji:d.emoji, price:base });
+  }
+  if (p.money >= base && !finance) {
+    p.money -= base;
+    deliver();
+    SFX.cash();
+    if (kind === 'island' || kind === 'prop' && base > 1000000) confetti();
+    narrate(`Compra feita: ${money(base)}.`, friend, 'money');
+    return;
+  }
+  const down = Math.round(base * 0.3);
+  if (!p.loan && p.money >= down && base - down <= 8000000) {
+    pushModal({ type:'finance', kind, id, base, down });
+    changed();
+    return;
+  }
+  toast('Dinheiro insuficiente.');
+}
+function confirmFinance() {
+  const m = G.modal;
+  const p = G.player;
+  if (p.money < m.down) { toast('A entrada sumiu.'); return; }
+  p.money -= m.down;
+  p.loan = { principal: m.base - m.down, missed: 0 };
+  closeModal();
+  buyKind(m.kind, m.id, true);
+}
+function payWithCashThen(cost, done) {
+  if (G.player.money < cost) { toast('Faltam ' + money(cost - G.player.money) + '.'); return false; }
+  G.player.money -= cost;
+  done();
+  return true;
+}
+
+function startAuction(lotId) {
+  if (!assertLiving()) return;
+  if (G.auction?.active) return toast('Já existe um leilão rolando.');
+  const lot = LOTS.find(l => l.id === lotId);
+  G.auction = { lotId, price: lot.base, leader:null, ends: Date.now()+10000, active:true, closing:false };
+  if (G.mp.on) send({ t:'auc', op:'start', lotId });
+  else { setTimeout(aiMaybe, 1600); setTimeout(aiMaybe, 3800); }
+  SFX.gavel();
+  pushModal({ type:'auction' });
+  changed();
+}
+function aiMaybe() {
+  const a = G.auction;
+  if (!a?.active || G.mp.on || a.leader === 'ai') return;
+  if (Math.random() < 0.7) {
+    a.price += Math.max(1000, Math.round(a.price * 0.08));
+    a.leader = 'ai';
+    a.ends = Date.now() + 10000;
+    a.closing = false;
+    SFX.gavel();
+    render();
+  }
+}
+function placeBid() {
+  const a = G.auction;
+  if (!a?.active) return;
+  const n = a.price + Math.max(1000, Math.round(a.price * 0.08));
+  if (G.player.money < n) return toast('Seu saldo não cobre ' + money(n) + '.');
+  a.price = n;
+  a.leader = mySide();
+  a.ends = Date.now() + 10000;
+  a.closing = false;
+  if (G.mp.on) send({ t:'auc', op:'bid', price:n, leader:a.leader });
+  else setTimeout(aiMaybe, 1400);
+  render();
+}
+function finishAuction() {
+  const a = G.auction;
+  if (!a?.active) return;
+  a.active = false;
+  const payload = { winner:a.leader, price:a.price, lotId:a.lotId };
+  if (G.mp.on && G.mp.isHost) send({ t:'aucEnd', ...payload });
+  if (!G.mp.on || G.mp.isHost) grantAuction(payload);
+}
+function grantAuction({ winner, price, lotId }) {
+  const lot = LOTS.find(l => l.id === lotId);
+  const mine = winner === mySide() || (winner === 'local' && !G.mp.on);
+  if (G.modal?.type === 'auction') closeModal();
+  G.auction = null;
+  if (!lot) { changed(); return; }
+  if (mine) {
+    if (G.player.money >= price) {
+      G.player.money -= price;
+      if (lot.car) G.player.vehicles.push({ uid:uid(), id:lot.id, name:lot.name, emoji:lot.emoji, value:price, stolen:false });
+      else if (lot.mystery) openMystery();
+      else G.player.items.push({ uid:uid(), id:lot.id, name:lot.name, emoji:lot.emoji, price });
+      SFX.gavel(); SFX.success(); confetti();
+      narrate(`Vendido! ${lot.name} ficou com você por ${money(price)}.`, `🔨 Seu amigo arrematou ${lot.name} no leilão.`, 'money');
+      return;
+    }
+    pushLog('Você venceu o lance de ' + lot.name + ', mas o dinheiro não cobriu.', 'bad');
+    SFX.fail();
+  } else if (winner === 'ai') {
+    pushLog('Um colecionador anônimo levou ' + lot.name + '.', 'info');
+    SFX.gavel();
+  } else if (winner) {
+    pushLog(lot.name + ' foi para o seu amigo.', 'info');
+    SFX.gavel();
+  } else pushLog('O leilão de ' + lot.name + ' encerrou sem lances.', 'info');
+  changed();
+}
+function openMystery() {
+  const r = Math.random();
+  if (r < 0.45) {
+    const n = rand(8000, 90000);
+    G.player.money += n;
+    pushLog('A caixa misteriosa tinha ' + money(n) + '.', 'money');
+  } else if (r < 0.8) {
+    G.player.items.push({ uid:uid(), id:'gem', name:'Gema bruta', emoji:'💎', price:34000 });
+    pushLog('Dentro da caixa havia uma gema.', 'money');
+  } else if (r < 0.92) {
+    addDisease(G.player, 'flu');
+    pushLog('Um pó estranho saiu da caixa. Você adoeceu.', 'bad');
+  } else pushLog('A caixa estava vazia. Você riu mesmo assim.', 'info');
+}
+function computeHeist(seed, choices) {
+  const rng = mulberry32(seed);
+  const hostC = choices.host || 'split';
+  const guestC = choices.guest || 'split';
+  const success = rng() < 0.78;
+  const loot = 90000 + Math.floor(rng() * 340000);
+  if (!success) return { ok:false, jail:'both', years:5, loot:0 };
+  if (hostC === 'betray' && guestC === 'betray') return { ok:false, jail:'both', years:6, loot:0, double:true };
+  if (hostC === 'betray') return { ok:true, who:'host', loot, jail:'guest', years:3 };
+  if (guestC === 'betray') return { ok:true, who:'guest', loot, jail:'host', years:3 };
+  return { ok:true, who:'both', loot, jail:'none', years:0 };
+}
+function maybeResolveHeist() {
+  const h = G.heist;
+  if (!h?.active) return;
+  const both = h.choices.host && h.choices.guest;
+  if (!both && Date.now() < h.ends) return;
+  if (G.mp.on && !G.mp.isHost) return;
+  h.active = false;
+  const result = computeHeist(h.seed, h.choices);
+  if (G.mp.on) send({ t:'heist', op:'result', result });
+  applyHeist(result);
+}
+function applyHeist(result) {
+  G.heist = null;
+  if (G.modal?.type === 'heist') closeModal();
+  const side = mySide();
+  const p = G.player;
+  if (result.ok && (result.who === 'both' || result.who === side)) {
+    const gain = result.who === 'both' ? Math.round(result.loot / 2) : result.loot;
+    p.money += gain;
+    p.crimes++;
+    p.karma = clamp(p.karma - 14, 0, 100);
+    p.heat = clamp(p.heat + 30, 0, 100);
+    SFX.cash();
+    pushLog('O assalto em dupla rendeu ' + money(gain) + (result.who === side ? ' — e você ficou com tudo.' : '.'), 'crime');
+    if (G.mp.on) send({ t:'feed', text:'💰 Seu amigo saiu de um assalto em dupla com ' + money(gain) + '.', kind:'crime' });
+  } else if (result.double) pushLog('Os dois tentaram trair. O cofre ficou e as algemas vieram.', 'crime');
+  else if (!result.ok) pushLog('O assalto em dupla fracassou.', 'crime');
+  else pushLog('Seu parceiro ficou com o dinheiro do assalto.', 'bad');
+  if (result.jail === 'both' || result.jail === side) { jailRisk(result.years || 4, 'assalto em dupla'); return; }
+  changed();
+}
+function applyFight(seed) {
+  const rng = mulberry32(seed);
+  const dmg = 8 + Math.floor(rng() * 14);
+  const p = G.player;
+  p.health -= dmg;
+  p.happiness = clamp(p.happiness - 7, 0, 100);
+  p.karma = clamp(p.karma - 5, 0, 100);
+  clampVitals(p);
+  pushLog(`A briga deixou ${dmg} pontos de saúde no chão.`, 'bad');
+  if (p.health <= 0) die('uma briga');
+  else { SFX.fail(); changed(); }
+}
+function haunt(kind) {
+  if (!G.player.ghost) return;
+  if (!G.mp.on || !G.friend?.alive) return toast('Não há ninguém vivo para visitar.');
+  if (G.friend.age !== G.player.lastHauntAge) { G.player.lastHauntAge = G.friend.age; G.player.haunts = 0; }
+  if (G.player.haunts >= 2) return toast('Sua energia espectral acabou neste ano do seu amigo.');
+  G.player.haunts++;
+  send({ t:'haunt', kind });
+  narrate(kind === 'scare' ? 'Você atravessou a sala do seu amigo.' : 'Você soprou um pouco de sorte.', kind === 'scare' ? '👻 Seu amigo sentiu um frio nas costas… você está sendo assombrado.' : '🍀 Uma brisa de sorte passou. Seu amigo fantasma andou por aqui.', kind === 'scare' ? 'bad' : 'good');
+}
+function settleEstate(mode) {
+  if (G.player.heir === 'friend' && G.mp.on && G.friend?.alive) {
+    const cut = mode === 'child' ? 0.3 : mode === 'ghost' ? 0.8 : 1;
+    const amt = Math.max(0, Math.round(Math.max(0, G.player.money) * cut));
+    G.player.money -= amt;
+    if (amt > 0) send({ t:'inherit', amount: amt });
+  }
+}
+function continueChild() {
+  const p = G.player;
+  const kids = p.relations.filter(r => r.role === 'child' && r.alive);
+  if (!kids.length) return toast('Você não deixou filhos.');
+  const kid = kids.sort((a,b)=>b.age-a.age)[0];
+  settleEstate('child');
+  const keepMoney = p.money;
+  const next = {
+    first: kid.name, last: p.last, gender: kid.gender, countryId: p.countryId, city: p.city,
+    skin: p.skin, hair: p.hair, talent: Math.random() < 0.5 ? p.talent : pick(TALENTS).id,
+    age: Math.max(0, kid.age), money: Math.max(0, keepMoney), savings: p.savings, loan: null,
+    happiness: rand(60, 80), health: rand(70, 90), smarts: rand(40, 70), looks: rand(40, 75), karma: rand(50, 75),
+    heat: 0, crimes: 0, sentence: 0, inPrison: false, conditions: [],
+    edu: { stage:'none', major:null, year:0, degree:null, club:null },
+    job: null, relations: [], properties: p.properties, vehicles: p.vehicles, islands: p.islands, items: p.items, stocks: p.stocks,
+    company: null, heir: null, marriedToPlayer: false, prenup: false, ghost: false, alive: true,
+    peak: 0, actions: 0, haunts: 0, lastHauntAge: -1, promotions: 0
+  };
+  if (next.age >= 18) next.edu.stage = 'hs';
+  else if (next.age >= 12) next.edu.stage = 'high';
+  else if (next.age >= 6) next.edu.stage = 'primary';
+  const spouse = p.relations.find(r => r.role === 'spouse' && r.alive && !r.isPlayer);
+  if (spouse) next.relations.push({ ...spouse, id:uid(), role:'parent', bond:70 });
+  kids.filter(k => k !== kid && k.alive).forEach(k => next.relations.push({ ...k, id:uid(), role:'sibling', bond:50 }));
+  clampVitals(next);
+  G.player = next;
+  G.afterlife = false;
+  G.screen = 'play';
+  G.modal = null;
+  pushLog(`Nova geração: você agora é ${next.first}, aos ${next.age} anos, com a herança da família.`, 'good');
+  next.peak = netWorth();
+  SFX.success();
+  changed();
+}
+function becomeGhost() {
+  settleEstate('ghost');
+  G.player.ghost = true;
+  G.player.alive = false;
+  G.afterlife = false;
+  G.screen = 'play';
+  closeModal();
+  pushLog('Você voltou como fantasma.', 'info');
+  SFX.death();
+  changed();
+}
+
+function onAgeClick() {
+  const p = G.player;
+  if (!p) return;
+  if (p.ghost) return toast('Fantasmas não envelhecem.');
+  if (!p.alive) return;
+  if (G.modal) return toast('Resolva o que está na sua frente antes de virar o ano.');
+  if (!G.mp.on) { rollMarket(); stepYear(null); return; }
+  if (G.turnMode === 'sync') {
+    G.ready.me = true;
+    send({ t:'ready', v:true });
+    trySyncYear();
+    render();
+    return;
+  }
+  if (G.mp.isHost) {
+    const pack = rollMarket();
+    const eventId = sharedEventFor(p.age + 1, G.friend ? G.friend.age : p.age + 1);
+    send({ t:'market', pack, purpose:'sync' });
+    stepYear(eventId);
+  } else {
+    G.waitYear = true;
+    send({ t:'needMarket' });
+    toast('Sincronizando o ano…');
+    render();
+  }
+}
+function trySyncYear() {
+  if (!G.ready.me || !G.ready.pal || !G.mp.isHost || G.yearLock) return;
+  G.yearLock = true;
+  const pack = rollMarket();
+  const fAge = (G.friend?.age ?? G.player.age) + 1;
+  const eventId = sharedEventFor(G.player.age + 1, fAge);
+  send({ t:'go', pack, eventId });
+  G.ready = { me:false, pal:false };
+  stepYear(eventId);
+  G.yearLock = false;
+}
+
+function peerOpts() {
+  return { debug:0, secure:true, host:'0.peerjs.com', port:443, path:'/', key:'peerjs',
+    config:{ iceServers:[{ urls:'stun:stun.l.google.com:19302' }, { urls:'stun:stun.cloudflare.com:3478' }] } };
+}
+function makeCode() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for (let i = 0; i < 5; i++) s += alphabet[Math.floor(Math.random() * alphabet.length)];
+  return s;
+}
+function wire(conn) {
+  G.mp.conn = conn;
+  const ready = () => {
+    if (G.mp.greeted) return;
+    G.mp.greeted = true;
+    G.mp.on = true;
+    G.mp.status = 'Conectado';
+    send({ t:'hello', p: G.player ? pub(G.player) : null });
+    if (!G.player && (G.screen === 'lobby' || G.screen === 'menu')) {
+      G.draft = G.draft || randomDraft();
+      G.screen = 'create';
+    }
+    toast('Conexão estabelecida.');
+    render();
+  };
+  conn.on('open', ready);
+  conn.on('data', onData);
+  conn.on('close', () => { G.mp.on = false; G.mp.status = 'Seu amigo saiu.'; toast('A conexão com o outro jogador caiu.'); render(); });
+  if (conn.open) ready();
+}
+function createRoom() {
+  if (!window.Peer) return toast('A biblioteca de conexão não carregou. Confira a internet e recarregue.');
+  const code = makeCode();
+  const peer = new Peer('vidadupla-' + code.toLowerCase(), peerOpts());
+  G.room = code;
+  G.mp = { on:false, isHost:true, code, status:'Abrindo sala…', peer, conn:null, greeted:false };
+  G.screen = 'lobby';
+  render();
+  peer.on('open', () => { G.mp.status = 'Sala aberta. Passe o código.'; render(); });
+  peer.on('connection', wire);
+  peer.on('error', (err) => {
+    if (err.type === 'unavailable-id') { try { peer.destroy(); } catch(e) {} createRoom(); return; }
+    G.mp.status = 'Falha na sala: ' + err.type;
+    toast(G.mp.status);
+    render();
+  });
+}
+function joinRoom(code) {
+  if (!window.Peer) return toast('A biblioteca de conexão não carregou. Confira a internet e recarregue.');
+  code = (code || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+  if (code.length < 4) return toast('Digite o código da sala.');
+  const peer = new Peer(undefined, peerOpts());
+  G.room = code;
+  G.mp = { on:false, isHost:false, code, status:'Conectando…', peer, conn:null, greeted:false };
+  G.screen = 'lobby';
+  render();
+  peer.on('open', () => wire(peer.connect('vidadupla-' + code.toLowerCase(), { reliable:true })));
+  peer.on('error', (err) => { G.mp.status = 'Não entrou: ' + err.type; toast(G.mp.status); render(); });
+}
+function onData(msg) {
+  if (!msg || typeof msg !== 'object') return;
+  const needsLife = ['steal','fight','sue','pix','haunt','heist','inherit','company','propose','divorce','social','auc','aucEnd'];
+  if (!G.player && needsLife.includes(msg.t)) { G.inbox.push(msg); return; }
+  if (msg.t === 'hello') {
+    if (msg.p) G.friend = msg.p;
+    G.mp.on = true;
+    syncFriendRelation();
+    if (G.player) send({ t:'snap', p: pub(G.player) });
+    render();
+  } else if (msg.t === 'snap') {
+    G.friend = msg.p;
+    syncFriendRelation();
+    render();
+  } else if (msg.t === 'feed') {
+    G.log.unshift({ age: G.friend?.age ?? '', text: msg.text, kind: msg.kind || 'info', who:'friend' });
+    toast(msg.text);
+    render();
+  } else if (msg.t === 'ready') {
+    G.ready.pal = !!msg.v;
+    trySyncYear();
+    render();
+  } else if (msg.t === 'go') {
+    if (applyPrices(msg.pack)) {
+      G.ready = { me:false, pal:false };
+      G.waitYear = false;
+      stepYear(msg.eventId || null);
+    }
+  } else if (msg.t === 'needMarket' && G.mp.isHost) {
+    const pack = rollMarket();
+    const eventId = sharedEventFor((G.friend?.age ?? 0) + 1, G.player.age);
+    send({ t:'market', pack, purpose:'grant', eventId });
+  } else if (msg.t === 'market') {
+    if (!applyPrices(msg.pack)) return;
+    if (msg.purpose === 'grant' && G.waitYear) { G.waitYear = false; stepYear(msg.eventId || null); }
+    else render();
+  } else if (msg.t === 'mode') {
+    G.turnMode = msg.mode === 'free' ? 'free' : 'sync';
+    G.ready = { me:false, pal:false };
+    render();
+  } else if (msg.t === 'auc' && msg.op === 'start') {
+    G.auction = { lotId: msg.lotId, price: LOTS.find(l=>l.id===msg.lotId)?.base || 1000, leader:null, ends: Date.now()+10000, active:true, closing:false };
+    pushModal({ type:'auction' });
+    render();
+  } else if (msg.t === 'auc' && msg.op === 'bid' && G.auction?.active) {
+    G.auction.price = msg.price;
+    G.auction.leader = msg.leader;
+    G.auction.ends = Date.now() + 10000;
+    G.auction.closing = false;
+    SFX.gavel();
+    render();
+  } else if (msg.t === 'aucEnd') {
+    grantAuction(msg);
+  } else if (msg.t === 'pix') {
+    G.player.money += msg.amount;
+    SFX.cash();
+    narrate(`Caiu ${money(msg.amount)} vindo do seu amigo${msg.reason ? ' ('+msg.reason+')' : ''}.`, null, 'money');
+  } else if (msg.t === 'ask') {
+    pushModal({ type:'confirm', title:'Pedido de dinheiro', text:`Seu amigo pediu ${money(msg.amount)}.`, yes:'ask-yes', payload:msg.amount });
+    render();
+  } else if (msg.t === 'inherit') {
+    G.player.money += msg.amount;
+    SFX.cash();
+    narrate(`Você herdou ${money(msg.amount)} do seu amigo.`, null, 'money');
+  } else if (msg.t === 'haunt') {
+    if (msg.kind === 'scare') {
+      G.player.happiness = clamp(G.player.happiness - 12, 0, 100);
+      G.player.health = clamp(G.player.health - 4, 0, 100);
+      SFX.fail();
+      narrate('Um frio atravessou a sala. Algo invisível estava aqui.', null, 'bad');
+    } else {
+      G.player.money += 5000;
+      G.player.happiness = clamp(G.player.happiness + 8, 0, 100);
+      SFX.success();
+      narrate('Uma sorte inexplicável: ' + money(5000) + ' apareceram.', null, 'good');
+    }
+  } else if (msg.t === 'fight') {
+    applyFight(msg.seed);
+  } else if (msg.t === 'steal' && msg.kind === 'money') {
+    const loss = Math.min(G.player.money, msg.amount);
+    G.player.money -= loss;
+    narrate(loss ? `Seu amigo tirou ${money(loss)} da sua carteira.` : 'Alguém mexeu no seu bolso, mas ele já estava vazio.', null, 'crime');
+  } else if (msg.t === 'steal' && msg.kind === 'car') {
+    if (msg.success) {
+      const idx = G.player.vehicles.findIndex(v => v.id === msg.veh.id);
+      if (idx >= 0) G.player.vehicles.splice(idx, 1);
+      narrate(`Seu ${msg.veh.name} sumiu. Seu amigo passou por aqui.`, null, 'crime');
+    } else narrate('Seu amigo tentou furtar seu carro e se deu mal.', null, 'crime');
+  } else if (msg.t === 'sue') {
+    if (msg.win) {
+      const pay = Math.min(G.player.money, msg.claim);
+      G.player.money -= pay;
+      narrate(`Você perdeu um processo e pagou ${money(pay)}.`, null, 'bad');
+    } else narrate('Seu amigo te processou e perdeu.', null, 'good');
+  } else if (msg.t === 'propose') {
+    pushModal({ type:'propose', prenup: msg.prenup, name: G.friend ? (G.friend.first+' '+G.friend.last) : 'Seu amigo' });
+    render();
+  } else if (msg.t === 'married') {
+    const r = G.player.relations.find(x => x.isPlayer) || { id:'duo', isPlayer:true, name: G.friend?.first || 'Amigo', gender: G.friend?.gender || 'x', age: G.friend?.age || 0, alive:true };
+    r.role = 'spouse'; r.bond = 90;
+    if (!G.player.relations.includes(r)) G.player.relations.unshift(r);
+    G.player.marriedToPlayer = true;
+    G.player.prenup = !!msg.prenup;
+    narrate(msg.prenup ? 'Vocês casaram com acordo pré-nupcial.' : 'Vocês casaram sem acordo pré-nupcial.', null, 'good');
+  } else if (msg.t === 'propose-no') {
+    toast('Seu amigo recusou o pedido.');
+  } else if (msg.t === 'divorce') {
+    const r = G.player.relations.find(x => x.isPlayer);
+    if (r) { r.role = 'rival'; r.bond = 8; }
+    G.player.marriedToPlayer = false;
+    narrate('O casamento de vocês acabou.', null, 'bad');
+  } else if (msg.t === 'social' && msg.op === 'talk') {
+    const r = G.player.relations.find(x => x.isPlayer);
+    if (r) r.bond = clamp(r.bond + 5, 0, 100);
+    G.player.happiness = clamp(G.player.happiness + 2, 0, 100);
+    narrate('Seu amigo puxou conversa.', null, 'good');
+  } else if (msg.t === 'company' && msg.op === 'invite') {
+    pushModal({ type:'confirm', title:'Sociedade', text:`${G.friend?.first || 'Seu amigo'} quer abrir ${msg.name} com entrada de ${money(msg.buyIn)} cada.`, yes:'company-yes', payload:{ buyIn: msg.buyIn, name: msg.name } });
+    render();
+  } else if (msg.t === 'company' && msg.op === 'accept') {
+    if (G.player.money >= msg.buyIn && !G.player.company) {
+      G.player.money -= msg.buyIn;
+      G.player.company = { name: msg.name, invested: msg.buyIn };
+      narrate(`A sociedade ${msg.name} está aberta.`, `🤝 Seu amigo fechou sociedade com você.`, 'good');
+    }
+  } else if (msg.t === 'company' && msg.op === 'no') toast('Seu amigo recusou a sociedade.');
+  else if (msg.t === 'heist' && msg.op === 'invite') {
+    pushModal({ type:'confirm', title:'Assalto em dupla', text:'Seu amigo chamou você para um banco. O lucro é maior. Alguém pode trair.', yes:'heist-yes', payload: msg.seed });
+    render();
+  } else if (msg.t === 'heist' && msg.op === 'accept') {
+    G.heist = { active:true, seed: msg.seed, choices:{}, ends: Date.now()+8000 };
+    pushModal({ type:'heist' });
+    render();
+  } else if (msg.t === 'heist' && msg.op === 'choice' && G.heist?.active) {
+    G.heist.choices[msg.side] = msg.choice;
+    maybeResolveHeist();
+    render();
+  } else if (msg.t === 'heist' && msg.op === 'result') applyHeist(msg.result);
+  else if (msg.t === 'heist' && msg.op === 'no') toast('Seu amigo recusou o assalto.');
+}
+
+function roleLabel(r) {
+  if (r.isPlayer && r.role === 'spouse') return 'Cônjuge jogador';
+  if (r.isPlayer) return 'Jogador conectado';
+  const map = { parent: r.gender==='f'?'Mãe':r.gender==='m'?'Pai':'Pai/Mãe', sibling: r.gender==='f'?'Irmã':'Irmão', friend:'Amizade', crush:'Namoro', spouse:'Cônjuge', child: r.gender==='f'?'Filha':'Filho', pet:'Pet', rival:'Rival' };
+  return map[r.role] || r.role;
+}
+function bar(label, icon, value) {
+  const v = clamp(Math.round(value || 0), 0, 100);
+  const col = v >= 60 ? 'var(--good)' : v >= 30 ? 'var(--warn)' : 'var(--bad)';
+  return `<div class="stat"><div class="stat-top"><span>${icon} ${label}</span><span>${v}</span></div><div class="track"><div class="fill" style="width:${v}%;background:${col}"></div></div></div>`;
+}
+function btn(act, label, extra='') { return `<button class="btn tiny" data-act="${act}" ${extra}>${label}</button>`; }
+function section(title, body) { return `<div class="card" style="margin-bottom:10px"><h3 style="margin-bottom:6px">${title}</h3>${body}</div>`; }
+
+function viewMenu() {
+  return `<div class="hero card">
+    <div class="pill" style="display:inline-block;margin-bottom:8px">Duo Edition</div>
+    <h1 class="grad">Vida Dupla</h1>
+    <p class="hint">Simulador de vida para um ou dois jogadores, no mesmo instante. Crie uma sala, mande o código e vivam lado a lado.</p>
+    <div class="menu-grid">
+      <button class="big" data-act="solo"><b>Modo solo</b><span class="hint">Uma vida inteira, no seu ritmo.</span></button>
+      <button class="big" data-act="host"><b>Criar sala</b><span class="hint">Você recebe um código curto de 5 letras.</span></button>
+      <div class="big"><b>Entrar na sala</b>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input id="join-code" maxlength="5" placeholder="EX: VIDA4" style="flex:1;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:10px">
+          <button class="btn" data-act="join">Entrar</button>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px">${controls()}</div>
+    <p class="hint" style="margin-top:14px">A sala usa conexão direta entre os dois navegadores. Os dois precisam estar online. O mesmo código não funciona como conta: quem cria a sala deixa a página aberta.</p>
+  </div>`;
+}
+function controls() {
+  const theme = ['light','Claro','dark','Escuro','neon','Neon'];
+  const layout = ['auto','Auto','mobile','Mobile','tablet','Tablet','desktop','Desktop'];
+  let t = '<div class="seg" style="justify-content:center">';
+  for (let i=0;i<theme.length;i+=2) t += `<button data-act="theme" data-id="${theme[i]}" class="${G.theme===theme[i]?'on':''}">${theme[i+1]}</button>`;
+  t += '</div><div class="seg" style="justify-content:center;margin-top:8px">';
+  for (let i=0;i<layout.length;i+=2) t += `<button data-act="layout" data-id="${layout[i]}" class="${G.layout===layout[i]?'on':''}">${layout[i+1]}</button>`;
+  t += `</div><div style="margin-top:10px;display:flex;gap:8px;align-items:center;justify-content:center">
+    <button class="btn alt tiny" data-act="mute">${SFX.muted ? 'Som desligado' : 'Som ligado'}</button>
+    <input id="vol" type="range" min="0" max="1" step="0.01" value="${SFX.volume}">
+  </div>`;
+  return t;
+}
+function viewLobby() {
+  return `<div class="hero card">
+    <h2>Sala ${esc(G.mp.code)}</h2>
+    <div class="code">${esc(G.mp.code)}</div>
+    <p>${esc(G.mp.status || '')}</p>
+    <div class="choices">
+      <button class="btn" data-act="copy">Copiar código</button>
+      <button class="btn alt" data-act="to-create">Criar meu personagem</button>
+      <button class="btn alt" data-act="menu">Voltar</button>
+    </div>
+    <p class="hint">O outro jogador digita esse código em Entrar na sala. Quando a conexão abrir, os dois criam a própria vida.</p>
+  </div>`;
+}
+function viewCreate() {
+  const d = G.draft;
+  const ctry = COUNTRIES.find(c => c.id === d.countryId) || COUNTRIES[0];
+  const preview = { skin:d.skin, hair:d.hair, age:18, gender:d.gender, ghost:false, alive:true };
+  return `<div class="card"><div class="split">
+    <div>
+      <h2>Quem vai viver</h2>
+      <p class="hint">${G.mp.on ? 'Sala '+esc(G.mp.code)+' · conectado' : 'Modo solo'}</p>
+      <div class="field"><label>Nome</label><input id="f-first" maxlength="18" value="${esc(d.first)}"></div>
+      <div class="field"><label>Sobrenome</label><input id="f-last" maxlength="18" value="${esc(d.last)}"></div>
+      <div class="field"><label>Gênero</label><select id="f-gender">${['m','Masculino','f','Feminino','x','Não binário'].reduce((a,x,i,arr)=> i%2? a : a+`<option value="${x}" ${d.gender===x?'selected':''}>${arr[i+1]}</option>`, '')}</select></div>
+      <div class="field"><label>País</label><select id="f-country">${COUNTRIES.map(c=>`<option value="${c.id}" ${c.id===d.countryId?'selected':''}>${c.name} · imposto ${Math.round(c.tax*100)}%</option>`).join('')}</select></div>
+      <div class="field"><label>Cidade</label><select id="f-city">${ctry.cities.map(city=>`<option ${city===d.city?'selected':''}>${esc(city)}</option>`).join('')}</select></div>
+      <div class="field"><label>Talento</label><select id="f-talent">${TALENTS.map(t=>`<option value="${t.id}" ${t.id===d.talent?'selected':''}>${t.emoji} ${t.name}</option>`).join('')}</select>
+        <span class="hint">${esc(TALENTS.find(t=>t.id===d.talent).blurb)}</span></div>
+      <div class="field"><label>Pele</label><div class="seg">${[0,1,2,3,4].map(i=>`<button type="button" class="swatch ${d.skin===i?'on':''}" style="background:${['#f3d2b5','#e0ac84','#c68642','#8d5524','#5a3317'][i]}" data-act="skin" data-id="${i}"></button>`).join('')}</div></div>
+      <div class="field"><label>Cabelo</label><div class="seg">${[0,1,2,3,4,5].map(i=>`<button type="button" class="swatch ${d.hair===i?'on':''}" style="background:${['#1c1c1c','#6b3e1e','#e0b354','#8d2f39','#245c43','#d5d5d5'][i]}" data-act="hair" data-id="${i}"></button>`).join('')}</div></div>
+    </div>
+    <div style="text-align:center">
+      <div class="avatar" style="width:120px;height:120px;margin:10px auto">${faceSVG(preview,110)}<span class="emo">${stageEmoji({age:18,gender:d.gender,alive:true})}</span></div>
+      <h3 id="name-preview">${esc(d.first)} ${esc(d.last)}</h3>
+      <p class="hint">${esc(ctry.name)} · ${esc(d.city)}</p>
+      <div class="choices">
+        <button class="btn" data-act="born">Nascer agora</button>
+        <button class="btn good" data-act="adult">Começar aos 18</button>
+        <button class="btn alt" data-act="randomize">Sortear de novo</button>
+        <button class="btn alt" data-act="menu">Voltar ao menu</button>
+      </div>
+    </div>
+  </div></div>`;
+}
+function topbar() {
+  const p = G.player;
+  const ctry = country();
+  return `<div class="topwrap"><div class="card">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="who">
+        <div class="avatar">${faceSVG(p,64)}<span class="emo">${stageEmoji(p)}</span></div>
+        <div>
+          <h2>${esc(p.first)} ${esc(p.last)}</h2>
+          <div class="hint">${p.ghost ? 'Fantasma' : p.age+' anos'} · ${esc(p.city)}, ${esc(ctry.name)} · ${esc(TALENTS.find(t=>t.id===p.talent)?.name || '')}</div>
+          <div class="pills">
+            ${p.job ? `<span class="pill">${p.job.emoji} ${esc(p.job.title)} nv.${p.job.level}</span>` : '<span class="pill">Sem emprego</span>'}
+            ${p.inPrison ? `<span class="pill">Preso · ${p.sentence}a</span>` : ''}
+            ${G.mp.on ? `<span class="pill">Sala ${esc(G.mp.code)}</span>` : '<span class="pill">Solo</span>'}
+          </div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="moneyline">${money(p.money)}</div>
+        <div class="hint">Patrimônio ${money(netWorth())} · Poupança ${money(p.savings)}</div>
+        <div class="seg" style="justify-content:flex-end;margin-top:6px">
+          <button class="tiny" data-act="mute">${SFX.muted?'🔇':'🔊'}</button>
+          <button data-act="theme" data-id="light" class="${G.theme==='light'?'on':''}">Claro</button>
+          <button data-act="theme" data-id="dark" class="${G.theme==='dark'?'on':''}">Escuro</button>
+          <button data-act="theme" data-id="neon" class="${G.theme==='neon'?'on':''}">Neon</button>
+        </div>
+      </div>
+    </div>
+    <div class="bars">
+      ${bar('Felicidade','😊',p.happiness)}
+      ${bar('Saúde','❤️',p.health)}
+      ${bar('Inteligência','🧠',p.smarts)}
+      ${bar('Aparência','✨',p.looks)}
+      ${bar('Carma','😈',p.karma)}
+    </div>
+  </div></div>`;
+}
+function timeline() {
+  const waiting = G.mp.on && G.turnMode==='sync' && G.ready.me && !G.ready.pal;
+  const entries = G.log.slice(0, 50).map(e => `<article class="entry ${e.kind||''} ${e.who==='friend'?'friend':''}"><b>${e.who==='friend'?'amigo':e.age}</b>${esc(e.text)}</article>`).join('') || '<p class="hint">O primeiro ano ainda não foi escrito.</p>';
+  return `<div class="scroll"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px">
+      <h3>Linha da vida</h3>
+      <button class="btn tiny" data-act="age" data-quiet="1">${waiting ? 'Aguardando…' : '+1 ano'}</button>
+    </div>
+    ${waiting ? '<p class="hint">Aguardando amigo virar o ano…</p>' : ''}
+    ${G.waitYear ? '<p class="hint">Sincronizando o mercado…</p>' : ''}
+    ${entries}
+  </div>`;
+}
+function workPanel() {
+  const p = G.player;
+  const edu = p.edu;
+  let school = '';
+  if (edu.stage === 'primary' || edu.stage === 'high') {
+    school = `<p class="hint">Você está na ${edu.stage==='primary'?'escola primária':'escola, no ensino médio'}.</p>
+      <div class="row-actions" style="margin:8px 0">
+        ${btn('study','Estudar mais')} ${btn('skip','Matar aula')}
+      </div>
+      <div class="row-actions">${CLUBS.map(c=>btn('club', c.name, `data-id="${c.id}"`)).join('')}</div>`;
+  } else if (edu.stage === 'uni') {
+    const major = MAJORS.find(m=>m.id===edu.major);
+    school = `<p>Faculdade: <b>${esc(major.name)}</b>, ano ${edu.year} de 4.</p>`;
+  } else if (edu.degree) {
+    school = `<p>Diploma em <b>${esc(MAJORS.find(m=>m.id===edu.degree).name)}</b>.</p>`;
+  } else if (p.age >= 18) {
+    school = `<p class="hint">Escola concluída. A universidade cobra mensalidade por 4 anos.</p>` +
+      MAJORS.map(m => `<div class="row"><div><b>${esc(m.name)}</b><small>Notas ${m.min}+ · ${money(priceOf(m.tuition))}/ano</small></div>${btn('uni','Entrar', `data-id="${m.id}"`)}</div>`).join('');
+  } else school = '<p class="hint">A escola chega aos 6 anos.</p>';
+  let job = '<p class="hint">Nenhum crachá no pescoço.</p>';
+  if (p.job) {
+    job = `<div class="row"><div><b>${p.job.emoji} ${esc(p.job.title)}</b><small>Nível ${p.job.level} · desempenho ${p.job.perf} · líquido anual ${money(annualPay())}</small></div></div>
+      <div class="row-actions">${btn('raise','Pedir aumento')}${btn('ot','Hora extra')}${btn('suck','Puxar saco')}${btn('sabotage','Sabotar colega')}${btn('quit','Pedir demissão','class="btn tiny bad"')}</div>`;
+  }
+  const offers = CAREERS.map(c => {
+    const ok = qualifies(p, c) && !p.job;
+    return `<div class="row"><div><b>${c.emoji} ${esc(c.title)}</b><small>${money(Math.round(c.base*country().sal*(1-country().tax)))} no nível 1${ok?'':' · requisito pendente'}</small></div>${ok?btn('apply','Candidatar',`data-id="${c.id}"`):''}</div>`;
+  }).join('');
+  const gigs = GIGS.map(g => `<div class="row"><div><b>${g.emoji} ${esc(g.name)}</b><small>${money(g.min)}–${money(g.max)}</small></div>${btn('gig','Fazer bico',`data-id="${g.id}"`)}</div>`).join('');
+  return section('Estudos', school) + section(p.job ? 'Seu trabalho' : 'Profissões', p.job ? job : job + offers) + (p.job ? section('Outras vagas', offers) : '') + section('Bicos', gigs);
+}
+function assetPanel() {
+  const p = G.player;
+  const bank = `<p>Corrente <b>${money(p.money)}</b> · Poupança <b>${money(p.savings)}</b>${p.loan?` · Dívida <b>${money(p.loan.principal)}</b>`:''}</p>
+    <div class="row-actions">${btn('save','Guardar 50%')}${btn('save-all','Guardar tudo')}${btn('draw','Sacar 50%')}${btn('draw-all','Sacar tudo')}</div>
+    <div class="row-actions" style="margin-top:8px">${[10000,50000,200000].map(n=>btn('loan','Empréstimo '+money(n),`data-id="${n}"`)).join('')}${p.loan?btn('payloan','Amortizar '+money(Math.min(p.money,p.loan.principal,20000)),'data-id="20000"'):''}</div>`;
+  const stocks = G.market.filter(s=>!s.crypto).map(stockRow).join('');
+  const crypto = G.market.filter(s=>s.crypto).map(stockRow).join('');
+  const props = PROPERTIES.map(d=>`<div class="row"><div><b>${d.emoji} ${esc(d.name)}</b><small>${money(priceOf(d.price))} · aluguel ${money(Math.round(d.rent*country().sal))}/ano</small></div>${btn('buy','Comprar',`data-kind="prop" data-id="${d.id}"`)}</div>`).join('')
+    + ownedProps();
+  const vehs = VEHICLES.map(d=>`<div class="row"><div><b>${d.emoji} ${esc(d.name)}</b><small>${money(priceOf(d.price))}</small></div>${btn('buy','Comprar',`data-kind="veh" data-id="${d.id}"`)}</div>`).join('') + ownedVeh();
+  const isles = ISLANDS.map(d=>`<div class="row"><div><b>${d.emoji} ${esc(d.name)}</b><small>${money(priceOf(d.price))}</small></div>${btn('buy','Comprar',`data-kind="island" data-id="${d.id}"`)}</div>`).join('') + ownedIsle();
+  const goods = GOODS.map(d=>`<div class="row"><div><b>${d.emoji} ${esc(d.name)}</b><small>${money(priceOf(d.price))}</small></div>${btn('buy','Comprar',`data-kind="item" data-id="${d.id}"`)}</div>`).join('') + ownedItems();
+  const lots = LOTS.map(d=>`<div class="row"><div><b>${d.emoji} ${esc(d.name)}</b><small>lance inicial ${money(d.base)}</small></div>${btn('auction','Abrir leilão',`data-id="${d.id}"`)}</div>`).join('');
+  return section('Banco', bank)+section('Bolsa', stocks)+section('Cripto', crypto)+section('Imóveis', props)+section('Garagem', vehs)+section('Ilhas', isles)+section('Objetos', goods)+section('Casa de leilões', lots);
+}
+function stockRow(s) {
+  const h = G.player.stocks[s.id];
+  const arrow = s.price > s.prev ? '▲' : s.price < s.prev ? '▼' : '•';
+  return `<div class="row"><div><b>${arrow} ${esc(s.name)}</b><small>${money(s.price)} · ${s.risk}${h?` · você tem ${h.shares.toFixed(2)}` :''}</small></div><div class="row-actions">${btn('share','+1',`data-id="${s.id}" data-n="1"`)}${btn('share','+10',`data-id="${s.id}" data-n="10"`)}${h?btn('sellshare','Vender',`data-id="${s.id}"`):''}</div></div>`;
+}
+function ownedProps() {
+  if (!G.player.properties.length) return '<p class="hint">Nenhuma chave no bolso.</p>';
+  return G.player.properties.map(prop=>`<div class="row"><div><b>${prop.emoji} ${esc(prop.name)}</b><small>valor ${money(prop.value)} · ${prop.rented?'alugado':'vazio'}</small></div><div class="row-actions">${btn('rent', prop.rented?'Parar aluguel':'Alugar',`data-id="${prop.uid}"`)}${btn('reno','Reformar',`data-id="${prop.uid}"`)}${btn('sellprop','Vender',`data-id="${prop.uid}"`)}</div></div>`).join('');
+}
+function ownedVeh() {
+  if (!G.player.vehicles.length) return '<p class="hint">Nenhum motor no seu nome.</p>';
+  return G.player.vehicles.map(v=>`<div class="row"><div><b>${v.emoji} ${esc(v.name)}</b><small>${v.stolen?'carro quente · revenda reduzida':'no seu nome'}</small></div>${btn('sellveh','Vender',`data-id="${v.uid}"`)}</div>`).join('');
+}
+function ownedIsle() {
+  if (!G.player.islands.length) return '';
+  return G.player.islands.map(i=>`<div class="row"><div><b>${i.emoji} ${esc(i.name)}</b><small>${i.mode==='resort'?'resort':i.mode==='hideout'?'esconderijo':'sem obra'}</small></div><div class="row-actions">${btn('resort','Resort',`data-id="${i.uid}"`)}${btn('hideout','Esconderijo',`data-id="${i.uid}"`)}${btn('sellisle','Vender',`data-id="${i.uid}"`)}</div></div>`).join('');
+}
+function ownedItems() {
+  if (!G.player.items.length) return '<p class="hint">Suas prateleiras estão vazias.</p>';
+  return '<p class="hint">Seus itens: '+G.player.items.map(i=>`${i.emoji} ${esc(i.name)}`).join(', ')+'</p>';
+}
+function peoplePanel() {
+  const p = G.player;
+  const list = p.relations.map(r => {
+    const alive = r.alive ? `${r.age} anos · vínculo ${r.bond}` : 'memória';
+    let actions = '';
+    if (r.alive && !p.ghost && !p.inPrison) {
+      actions = btn('talk','Falar',`data-id="${r.id}"`)+btn('compliment','Elogiar',`data-id="${r.id}"`)+btn('trip','Viajar',`data-id="${r.id}"`)+btn('argue','Discutir',`data-id="${r.id}"`);
+      if (p.items.length) actions += btn('gift','Presente',`data-id="${r.id}"`);
+      if (r.role==='crush' && r.bond>=55) actions += btn('marry-npc','Casar',`data-id="${r.id}"`);
+      if (r.role==='crush' || (r.role==='spouse' && !r.isPlayer)) actions += btn('breakup','Terminar',`data-id="${r.id}"`);
+      if (!r.isPlayer && r.role!=='pet' && r.role!=='child') actions += btn('sue-npc','Processar',`data-id="${r.id}"`);
+    }
+    return `<div class="row"><div><b>${r.emoji||''} ${esc(r.name)}</b><small>${roleLabel(r)} · ${alive}</small></div><div class="row-actions">${actions}</div></div>`;
+  }).join('');
+  const extra = `<div class="row-actions" style="margin-bottom:8px">${btn('meet','Conhecer alguém')}${btn('baby','Ter filho')}${PETS.map(pet=>btn('pet', pet.emoji+' '+pet.name, `data-id="${pet.id}"`)).join('')}</div>`;
+  return section('Gente', extra + (list || '<p class="hint">O mundo ainda está vazio.</p>')) + friendActions(true);
+}
+function friendActions(inner) {
+  if (!G.mp.on) return inner ? '' : section('O outro lado', '<p class="hint">No solo, a coluna ao lado vira um painel de metas. Abra uma sala para jogar com alguém.</p>');
+  if (!G.friend) return section('O outro lado', '<p class="hint">Conectado. Esperando o personagem do seu amigo.</p>');
+  const f = G.friend;
+  const buttons = G.player.ghost ? `${btn('scare','Assombrar')}${btn('luck','Dar sorte')}` : `
+    ${btn('p-talk','Conversar')}${btn('pix','Enviar dinheiro')}${btn('ask','Pedir dinheiro')}
+    ${btn('company','Abrir sociedade')}${btn('propose','Pedir em casamento')}
+    ${btn('fight','Brigar')}${btn('sue','Processar')}${btn('heir', G.player.heir==='friend'?'Tirar do testamento':'Deixar herança')}
+    ${btn('steal-money','Furtar carteira')}${btn('steal-car','Furtar carro')}${btn('heist','Assalto em dupla')}`;
+  const card = `<div class="who" style="margin-bottom:8px"><div class="avatar">${faceSVG(f,56)}<span class="emo">${stageEmoji(f)}</span></div>
+    <div><b>${esc(f.first||'')} ${esc(f.last||'')}</b><div class="hint">${f.ghost?'fantasma':(f.alive?f.age+' anos':'morreu')} · ${f.job?esc(f.job.title):'sem emprego'} · ${money(f.net||0)}</div></div></div>
+    ${bar('Felicidade','😊',f.happiness)}${bar('Saúde','❤️',f.health)}
+    <div class="row-actions" style="margin-top:8px">${buttons}</div>`;
+  return inner ? section('Jogador conectado', card) : card;
+}
+function lifePanel() {
+  const p = G.player;
+  if (p.ghost) return section('Além', `<p>Você assombra ${esc(G.friend?.first || 'ninguém')}.</p><div class="row-actions">${btn('scare','Susto')}${btn('luck','Sorte')}</div><p class="hint">Dá para agir duas vezes por ano do amigo vivo.</p>`);
+  const cond = p.conditions.length ? p.conditions.map(c=>c.name).join(', ') : 'nada diagnosticado';
+  const health = `<p>Condições: ${esc(cond)}. Calor da polícia: ${p.heat}.</p>
+    <div class="row-actions">${btn('doctor','Médico')}${btn('gym','Academia')}${btn('meditate','Meditar')}${btn('read','Ler')}${btn('plastic','Plástica')}${btn('vacation','Férias')}</div>`;
+  const casino = `<div class="row-actions">${btn('bj','Blackjack 500')}${btn('bj','Blackjack 2000','data-id="2000"')}${btn('red','Roleta vermelho')}${btn('black','Roleta preto')}${btn('green','Roleta verde')}</div>
+    <p class="hint">Verde paga 14 para 1. Cores pagam 1 para 1, já descontada a aposta de ${money(500)}.</p>`;
+  const crimes = CRIMES.map(c=>`<div class="row"><div><b>${c.emoji} ${esc(c.name)}</b><small>${money(c.min)}–${money(c.max)} · risco de ${c.years} ano(s)</small></div>${btn('crime','Tentar',`data-id="${c.id}"`)}</div>`).join('');
+  const street = STREET.map(c=>`<div class="row"><div><b>${c.emoji} ${esc(c.name)}</b><small>revenda cerca de ${money(c.loot)}</small></div>${btn('street','Furtar',`data-id="${c.id}"`)}</div>`).join('');
+  return section('Corpo e cabeça', health)+section('Cassino', casino)+section('O lado torto', crimes + street + `<div class="row"><div><b>🏦 Banco em dupla</b><small>Só com o outro jogador. Dá para trair.</small></div>${btn('heist','Chamar')}</div>`);
+}
+function goalsPanel() {
+  const p = G.player;
+  const goals = [
+    [netWorth()>=1000000, 'Passar de um milhão'],
+    [p.properties.length>0, 'Comprar um imóvel'],
+    [!!spouseOf(p), 'Casar'],
+    [p.relations.some(r=>r.role==='child'), 'Ter um filho'],
+    [!!p.edu.degree, 'Conquistar um diploma'],
+    [p.job && p.job.level>=4, 'Chegar ao nível 4 de uma carreira'],
+    [p.islands.length>0, 'Ter uma ilha'],
+    [p.crimes===0 && p.age>=40, 'Chegar aos 40 sem ficha']
+  ];
+  return `<h3 style="margin-bottom:8px">Metas desta vida</h3>` + goals.map(([ok,t])=>`<div class="row"><div><b>${ok?'✔':'○'} ${t}</b></div></div>`).join('') + `<p class="hint" style="margin-top:8px">Patrimônio ${money(netWorth())}. Calor ${p.heat}. Ações restantes no ano: ${Math.max(0,6-p.actions)}.</p>`;
+}
+function dock() {
+  const waiting = G.mp.on && G.turnMode==='sync' && G.ready.me && !G.ready.pal;
+  const tabs = [['work','Trabalho'],['assets','Patrimônio'],['people','Relações'],['life','Atividades']];
+  return `<nav class="dock">${tabs.slice(0,2).map(([id,label])=>`<button class="tab ${G.tab===id?'on':''}" data-act="tab" data-id="${id}">${label}</button>`).join('')}
+    <button class="fab ${waiting?'wait':''}" data-act="age" data-quiet="1">${waiting?'…':'+1'}<small>${waiting?'amigo':'ano'}</small></button>
+    ${tabs.slice(2).map(([id,label])=>`<button class="tab ${G.tab===id?'on':''}" data-act="tab" data-id="${id}">${label}</button>`).join('')}</nav>`;
+}
+function viewPlay() {
+  const panels = { work: workPanel, assets: assetPanel, people: peoplePanel, life: lifePanel };
+  const body = (panels[G.tab] || workPanel)();
+  const mode = G.mp.on ? `<div class="seg" style="margin-bottom:8px">
+      <button data-act="mode" data-id="sync" class="${G.turnMode==='sync'?'on':''}">Turno junto</button>
+      <button data-act="mode" data-id="free" class="${G.turnMode==='free'?'on':''}">Tempo livre</button>
+      <button data-act="layout" data-id="auto">Auto</button>
+      <button data-act="layout" data-id="mobile">Mobile</button>
+      <button data-act="layout" data-id="desktop">Desktop</button>
+    </div>` : `<div class="seg" style="margin-bottom:8px"><button data-act="layout" data-id="auto">Auto</button><button data-act="layout" data-id="mobile">Mobile</button><button data-act="layout" data-id="tablet">Tablet</button><button data-act="layout" data-id="desktop">Desktop</button></div>`;
+  return `${topbar()}<div class="stage">
+    <section class="card col-timeline">${timeline()}</section>
+    <section class="col-main scroll">${mode}<button class="btn alt tiny" data-act="back">Fechar painel</button>${body}</section>
+    <aside class="card col-friend scroll">${G.mp.on ? friendActions(false) : goalsPanel()}</aside>
+  </div>${dock()}${modalHTML()}`;
+}
+function leaderName(leader) {
+  if (!leader) return 'ninguém';
+  if (leader === 'ai') return 'um colecionador';
+  if (leader === mySide() || leader === 'local') return 'você';
+  return 'seu amigo';
+}
+function modalHTML() {
+  const m = G.modal;
+  if (!m) return '';
+  let inner = '';
+  if (m.type === 'event') {
+    const ev = EVENTS.find(e => e.id === m.eventId);
+    inner = `<h3>${esc(ev.title)}</h3>${m.shared?'<p class="pill">Evento em comum</p>':''}<p>${esc(ev.text)}</p><div class="choices">${ev.choices.map((c,i)=>`<button class="btn alt" data-act="choice" data-id="${i}">${esc(c.t)}</button>`).join('')}</div>`;
+  } else if (m.type === 'lawyer') {
+    const tiers = [[500,0.28,'Defensoria'],[8000,0.58,'Advogado'],[40000,0.84,'Banca de elite']];
+    inner = `<h3>Você foi pego</h3><p>${esc(m.reason)}. Sem absolvição, são ${m.years} ano(s).</p><div class="choices">${tiers.map((t,i)=>`<button class="btn" data-act="lawyer" data-id="${i}" ${G.player.money<priceOf(t[0])?'disabled':''}>${t[2]} · ${money(priceOf(t[0]))}</button>`).join('')}<button class="btn alt" data-act="lawyer" data-id="none">Ir sem advogado</button></div>`;
+  } else if (m.type === 'prison') {
+    inner = `<h3>Pátio</h3><p>Escolha o que fazer com este ano preso. Ainda faltam ${G.player.sentence}.</p><div class="choices">${[['yard','Malhar no pátio'],['riot','Liderar rebelião'],['bribe','Subornar guarda'],['escape','Tentar fugir']].map(([id,label])=>`<button class="btn alt" data-act="prison" data-id="${id}">${label}</button>`).join('')}</div>`;
+  } else if (m.type === 'escape') {
+    inner = `<h3>Três caminhos</h3><p>Um deles está limpo. Os outros devolvem você com pena maior.</p><div class="choices">${['Túnel da lavanderia','Caminhão de comida','Portão da madrugada'].map((label,i)=>`<button class="btn" data-act="route" data-id="${i}">${label}</button>`).join('')}</div>`;
+  } else if (m.type === 'auction') {
+    const lot = LOTS.find(l => l.id === G.auction?.lotId);
+    inner = `<h3>Leilão ao vivo</h3><p>${lot?lot.emoji+' '+esc(lot.name):''}</p><p class="moneyline">${G.auction?money(G.auction.price):''}</p><p>Na frente: ${esc(leaderName(G.auction?.leader))} · <span id="auc-left">10s</span></p><button class="btn" data-act="bid">Dar lance</button>`;
+  } else if (m.type === 'heist') {
+    inner = `<h3>O cofre abriu</h3><p>Dividir ou trair? Se os dois traírem, ninguém leva. <span id="heist-left">8s</span></p><div class="choices"><button class="btn good" data-act="heist-choice" data-id="split">Dividir</button><button class="btn bad" data-act="heist-choice" data-id="betray">Trair e fugir com tudo</button></div>`;
+  } else if (m.type === 'finance') {
+    inner = `<h3>Financiar?</h3><p>Entrada de ${money(m.down)} e dívida de ${money(m.base-m.down)}, cobrada todo ano.</p><div class="choices"><button class="btn" data-act="finance-yes">Assinar</button><button class="btn alt" data-act="close">Agora não</button></div>`;
+  } else if (m.type === 'confirm') {
+    inner = `<h3>${esc(m.title)}</h3><p>${esc(m.text)}</p><div class="choices"><button class="btn" data-act="${m.yes}">Aceitar</button><button class="btn alt" data-act="confirm-no">Recusar</button></div>`;
+  } else if (m.type === 'propose') {
+    inner = `<h3>Pedido</h3><p>${esc(m.name)} quer casar ${m.prenup?'com':'sem'} acordo pré-nupcial.</p><div class="choices"><button class="btn" data-act="propose-yes">Aceitar</button><button class="btn alt" data-act="propose-no">Recusar</button></div>`;
+  } else if (m.type === 'amount') {
+    inner = `<h3>${esc(m.title)}</h3><div class="field"><input id="amount" type="number" min="1" value="${m.value||1000}"></div><div class="choices"><button class="btn" data-act="${m.yes}">Enviar</button><button class="btn alt" data-act="close">Cancelar</button></div>`;
+  } else if (m.type === 'gift') {
+    inner = `<h3>Escolher presente</h3><div class="choices">${G.player.items.map(i=>`<button class="btn alt" data-act="give" data-id="${i.uid}">${i.emoji} ${esc(i.name)}</button>`).join('')}<button class="btn alt" data-act="close">Cancelar</button></div>`;
+  } else if (m.type === 'afterlife') {
+    const kids = G.player.relations.some(r => r.role==='child' && r.alive);
+    inner = `<h3>A vida fechou</h3><p>${esc(G.player.first)} partiu aos ${G.player.age}. Dá para continuar de outro jeito.</p><div class="choices">${kids?'<button class="btn" data-act="as-child">Jogar como filho e herdar</button>':''}<button class="btn" data-act="as-ghost">Virar fantasma</button><button class="btn alt" data-act="see-grave">Ver a lápide</button></div>`;
+  } else if (m.type === 'bj') {
+    const t = G.table;
+    const hide = !t.done;
+    inner = `<h3>Blackjack</h3><p>Mesa</p><div class="hand">${t.dealer.map((c,i)=>hide&&i===0?'🂠':cardTxt(c)).join(' ')}</div><p>Você · ${handValue(t.player)}</p><div class="hand">${t.player.map(cardTxt).join(' ')}</div>${t.note?`<p>${esc(t.note)}</p>`:''}<div class="choices">${t.done?`<button class="btn" data-act="close">Fechar</button>`:`<button class="btn" data-act="hit">Pedir</button><button class="btn alt" data-act="stand">Parar</button>`}</div>`;
+  }
+  return `<div class="modal-back"><div class="modal">${inner}</div></div>`;
+}
+function viewGrave() {
+  const e = G.epitaph || buildEpitaph();
+  return `<div class="tomb"><div style="font-size:42px">🪦</div><h2>${esc(e.name)}</h2><p>${e.age} anos · ${esc(e.city)}</p><p>${esc(e.cause)}</p><p>Patrimônio ${money(e.net)}<br>${e.kids} filho(s) · ${e.crimes} crime(s)<br>${esc(e.job)}</p><div>${e.ribbons.map(r=>`<span class="ribbon">${esc(r)}</span>`).join('')}</div></div>
+  <div class="choices" style="max-width:440px;margin:12px auto">${G.afterlife?'<button class="btn" data-act="as-child">Continuar como filho</button><button class="btn" data-act="as-ghost">Virar fantasma</button>':''}<button class="btn alt" data-act="reset">Nova vida</button></div>`;
+}
+function view() {
+  if (G.screen === 'menu') return viewMenu();
+  if (G.screen === 'lobby') return viewLobby();
+  if (G.screen === 'create') return viewCreate();
+  if (G.screen === 'grave') return viewGrave();
+  return viewPlay();
+}
+function render() {
+  document.documentElement.dataset.theme = G.theme;
+  document.documentElement.dataset.layout = G.layout;
+  const app = document.getElementById('app');
+  const prev = document.querySelector('.col-timeline .scroll, .col-timeline');
+  const st = prev ? prev.scrollTop : 0;
+  try { app.innerHTML = view(); }
+  catch (err) { app.innerHTML = `<pre class="card">${esc(err.stack || err.message)}</pre>`; console.error(err); }
+  const now = document.querySelector('.col-timeline .scroll');
+  if (now) now.scrollTop = st;
+}
+function cardTxt(c) { return ({1:'A',11:'J',12:'Q',13:'K'}[c.r] || c.r) + c.s; }
+function handValue(hand) {
+  let t = 0, aces = 0;
+  for (const c of hand) { if (c.r===1) { aces++; t+=11; } else t += Math.min(c.r, 10); }
+  while (t>21 && aces) { t-=10; aces--; }
+  return t;
+}
+function freshDeck() {
+  const cards = [];
+  for (const s of ['♠','♥','♦','♣']) for (let r=1;r<=13;r++) cards.push({ r, s });
+  for (let i=cards.length-1;i>0;i--) { const j=rand(0,i); [cards[i],cards[j]]=[cards[j],cards[i]]; }
+  return cards;
+}
+function dealBj(bet) {
+  if (!assertLiving() || G.player.inPrison) return;
+  bet = bet || 500;
+  if (G.player.money < bet) return toast('A ficha é maior que o bolso.');
+  G.player.money -= bet;
+  const deck = freshDeck();
+  G.table = { bet, deck, player:[deck.pop(), deck.pop()], dealer:[deck.pop(), deck.pop()], done:false, note:'' };
+  if (handValue(G.table.player)===21) settleBj('blackjack');
+  else { pushModal({ type:'bj' }); changed(); }
+}
+function settleBj(kind) {
+  const t = G.table;
+  t.done = true;
+  const pv = handValue(t.player);
+  let dv = handValue(t.dealer);
+  if (kind!=='bust' && kind!=='blackjack') while (dv<17) { t.dealer.push(t.deck.pop()); dv = handValue(t.dealer); }
+  let mult = 0;
+  if (kind==='blackjack') mult = 2.5;
+  else if (kind==='bust' || pv>21) mult = 0;
+  else if (dv>21 || pv>dv) mult = 2;
+  else if (pv===dv) mult = 1;
+  G.player.money += Math.round(t.bet * mult);
+  t.note = mult===0 ? 'A banca ficou com a ficha.' : mult===1 ? 'Empate. A ficha voltou.' : mult===2.5 ? '21 de saída.' : 'Você levou.';
+  if (mult>1) SFX.cash(); else SFX.fail();
+  if (G.modal?.type!=='bj') pushModal({ type:'bj' });
+  changed();
+}
+function spinRoulette(color) {
+  if (!assertLiving() || G.player.inPrison) return;
+  const bet = 500;
+  if (G.player.money < bet) return toast('Sem ficha.');
+  G.player.money -= bet;
+  const n = rand(0, 36);
+  const reds = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
+  const landed = n===0 ? 'green' : reds.has(n) ? 'red' : 'black';
+  let win = 0;
+  if (landed===color) win = color==='green' ? bet*15 : bet*2;
+  G.player.money += win;
+  if (win) { SFX.cash(); narrate(`Roleta: ${n} ${landed}. Você ganhou ${money(win)}.`, null, 'money'); }
+  else { SFX.fail(); narrate(`Roleta: ${n} ${landed}. A ficha ficou na mesa.`, null, 'bad'); }
+}
+
+const ACTIONS = {
+  solo() { G.mp = blankMp(); G.room='SOLO'; G.friend=null; G.draft=randomDraft(); G.screen='create'; render(); },
+  host() { createRoom(); },
+  join() { joinRoom(document.getElementById('join-code')?.value); },
+  menu() { captureDraft(); G.screen='menu'; render(); },
+  'to-create'() { G.draft = G.draft || randomDraft(); G.screen='create'; render(); },
+  async copy() { try { await navigator.clipboard.writeText(G.mp.code); toast('Código copiado.'); } catch(e) { toast(G.mp.code); } },
+  theme(d) { captureDraft(); G.theme=d.id; localStorage.setItem('vd-theme', d.id); render(); },
+  layout(d) { captureDraft(); G.layout=d.id; localStorage.setItem('vd-layout', d.id); render(); },
+  mute() { SFX.muted=!SFX.muted; localStorage.setItem('vd-mute', SFX.muted?'1':'0'); if(!SFX.muted) SFX.click(); render(); },
+  skin(d) { captureDraft(); G.draft.skin=+d.id; render(); },
+  hair(d) { captureDraft(); G.draft.hair=+d.id; render(); },
+  randomize() { const c=G.draft?.countryId; G.draft=randomDraft(); if(c){ G.draft.countryId=c; G.draft.city=COUNTRIES.find(x=>x.id===c).cities[0]; } render(); },
+  born() { captureDraft(); createLife(0); },
+  adult() { captureDraft(); createLife(18); },
+  tab(d) { G.tab=d.id; document.documentElement.dataset.panel='open'; render(); },
+  back() { document.documentElement.dataset.panel=''; render(); },
+  age() { onAgeClick(); },
+  mode(d) { G.turnMode=d.id==='free'?'free':'sync'; G.ready={me:false,pal:false}; if(G.mp.on) send({t:'mode', mode:G.turnMode}); render(); },
+  choice(d) {
+    const ev = EVENTS.find(e => e.id===G.modal.eventId);
+    const c = ev.choices[+d.id];
+    c.apply(G.player);
+    if (ev.id==='lottery' && G.player._note) { pushLog(G.player._note, 'money'); G.player._note=''; }
+    else pushLog(c.log, c.kind);
+    closeModal();
+    clampVitals(G.player);
+    if (G.player.health<=0) die('as consequências de uma escolha');
+    else changed();
+  },
+  study() { if(!['primary','high'].includes(G.player.edu.stage)) return; if(!spendAction())return; G.player.smarts=clamp(G.player.smarts+5,0,100); G.player.happiness=clamp(G.player.happiness-2,0,100); narrate('Você estudou além da conta.', null, 'good'); },
+  skip() { if(!['primary','high'].includes(G.player.edu.stage)) return; if(!spendAction())return; G.player.happiness=clamp(G.player.happiness+6,0,100); G.player.smarts=clamp(G.player.smarts-4,0,100); G.player.karma=clamp(G.player.karma-2,0,100); narrate('A aula aconteceu sem você.', null, 'info'); },
+  club(d) { if(!['primary','high'].includes(G.player.edu.stage)) return toast('Isso é coisa de escola.'); if(G.player.edu.club) return toast('Você já escolheu um clube.'); const c=CLUBS.find(x=>x.id===d.id); G.player.edu.club=c.id; applyFx(G.player,c.fx); narrate('Você entrou no clube de '+c.name+'.', null,'good'); },
+  uni(d) { const m=MAJORS.find(x=>x.id===d.id); const p=G.player; if(p.age<18||p.edu.stage==='uni'||p.edu.degree) return; if(p.smarts<m.min) return toast('Suas notas ainda não abrem essa porta.'); p.edu.stage='uni'; p.edu.major=m.id; p.edu.year=0; narrate('Matrícula feita em '+m.name+'.', '🎓 Seu amigo entrou na universidade.', 'good'); },
+  apply(d) { if(!assertLiving())return; if(G.player.job) return toast('Peça demissão antes.'); if(hire(G.player,d.id)) narrate('Você foi contratado como '+G.player.job.title+'.', '💼 Seu amigo começou a trabalhar como '+G.player.job.title+'.', 'good'); else toast('Essa vaga não abre para você agora.'); },
+  raise() { const j=G.player.job; if(!j||!spendAction()) return; if(j.raised) return toast('Você já pediu neste ano.'); j.raised=true; if(j.perf>=60){ j.base=Math.round(j.base*1.08); SFX.success(); narrate('O aumento passou.', '💸 Seu amigo conseguiu um aumento.', 'money'); } else { SFX.fail(); narrate('O chefe riu do pedido.', null,'bad'); } },
+  ot() { const j=G.player.job; if(!j||!spendAction())return; j.perf=clamp(j.perf+8,0,100); G.player.health=clamp(G.player.health-4,0,100); G.player.happiness=clamp(G.player.happiness-3,0,100); const extra=Math.round(annualPay()*0.12); G.player.money+=extra; narrate('Hora extra rendeu '+money(extra)+'.', null,'money'); },
+  suck() { const j=G.player.job; if(!j||!spendAction())return; j.perf=clamp(j.perf+12,0,100); G.player.karma=clamp(G.player.karma-3,0,100); narrate('Você riu das piadas do chefe.', null,'info'); },
+  sabotage() { const j=G.player.job; if(!j||!spendAction())return; if(Math.random()<0.55){ j.perf=clamp(j.perf+14,0,100); G.player.karma=clamp(G.player.karma-10,0,100); narrate('O colega levou a culpa.', null,'crime'); } else { G.player.job=null; G.player.karma=clamp(G.player.karma-8,0,100); SFX.fail(); narrate('A sabotagem voltou. Você foi demitido.', '😬 Seu amigo foi demitido depois de uma sabotagem.', 'bad'); } },
+  quit() { if(!G.player.job) return; const t=G.player.job.title; G.player.job=null; G.player.happiness=clamp(G.player.happiness+5,0,100); narrate('Você saiu de '+t+'.', null,'info'); },
+  gig(d) { if(!assertLiving()||G.player.inPrison) return; const g=GIGS.find(x=>x.id===d.id); if(G.player.age<g.minAge) return toast('Ainda não.'); if(g.smarts && G.player.smarts<g.smarts) return toast('Falta traquejo técnico.'); if(!spendAction())return; let pay=rand(g.min,g.max); if(G.player.talent==='tech'&&g.id==='dev') pay=Math.round(pay*1.35); pay=Math.round(pay*country().sal); G.player.money+=pay; SFX.cash(); narrate(`${g.emoji} Bico de ${g.name}: ${money(pay)}.`, null,'money'); },
+  save() { moveBank(0.5, true); }, 'save-all'(){ moveBank(1,true); }, draw(){ moveBank(0.5,false); }, 'draw-all'(){ moveBank(1,false); },
+  loan(d) { const n=+d.id; const p=G.player; if(p.loan) return toast('Quite o empréstimo atual.'); if(p.age<18) return toast('O banco pede maioridade.'); p.loan={principal:n,missed:0}; p.money+=n; SFX.cash(); narrate('Empréstimo de '+money(n)+' caiu na conta.', '🏦 Seu amigo pegou um empréstimo.', 'money'); },
+  payloan(d) { const p=G.player; if(!p.loan) return; const n=Math.min(+d.id, p.loan.principal, p.money); if(n<=0) return toast('Sem dinheiro para amortizar.'); p.money-=n; p.loan.principal-=n; if(p.loan.principal<=0) p.loan=null; narrate('Você abateu '+money(n)+' da dívida.', null,'money'); },
+  share(d) { const s=G.market.find(x=>x.id===d.id); const n=+d.n; const cost=s.price*n; if(G.player.money<cost) return toast('Saldo insuficiente.'); G.player.money-=cost; const h=G.player.stocks[s.id]||{shares:0,avg:0}; h.avg=(h.avg*h.shares+cost)/(h.shares+n); h.shares+=n; G.player.stocks[s.id]=h; SFX.cash(); narrate(`Comprou ${n} de ${s.name}.`, null,'money'); },
+  sellshare(d) { const h=G.player.stocks[d.id]; const s=G.market.find(x=>x.id===d.id); if(!h) return; let gain=h.shares*s.price; if(G.player.talent==='finance') gain*=1.05; G.player.money+=gain; delete G.player.stocks[d.id]; SFX.cash(); narrate(`Vendeu ${s.name} por ${money(gain)}.`, null,'money'); },
+  buy(d) { buyKind(d.kind, d.id, false); },
+  'finance-yes'() { confirmFinance(); },
+  rent(d) { const prop=G.player.properties.find(x=>x.uid===d.id); prop.rented=!prop.rented; narrate(prop.rented?`Você colocou ${prop.name} para alugar.`:`${prop.name} voltou a ser só seu.`, null,'info'); },
+  reno(d) { const prop=G.player.properties.find(x=>x.uid===d.id); const cost=Math.round(prop.value*0.12); if(!payWithCashThen(cost, ()=>{ prop.value=Math.round(prop.value*1.22); prop.rent=Math.round(prop.rent*1.22); })) return; SFX.gavel(); narrate(`${prop.name} ficou melhor depois da reforma.`, null,'money'); },
+  sellprop(d) { const i=G.player.properties.findIndex(x=>x.uid===d.id); const prop=G.player.properties[i]; const gain=Math.round(prop.value*0.9); G.player.properties.splice(i,1); G.player.money+=gain; SFX.cash(); narrate(`Vendeu ${prop.name} por ${money(gain)}.`, null,'money'); },
+  sellveh(d) { const i=G.player.vehicles.findIndex(x=>x.uid===d.id); const v=G.player.vehicles[i]; const gain=Math.round(v.value*(v.stolen?0.42:0.75)); G.player.vehicles.splice(i,1); G.player.money+=gain; SFX.cash(); narrate(`Vendeu ${v.name} por ${money(gain)}.`, null,'money'); },
+  sellisle(d) { const i=G.player.islands.findIndex(x=>x.uid===d.id); const v=G.player.islands[i]; const gain=Math.round(v.value*0.88); G.player.islands.splice(i,1); G.player.money+=gain; SFX.cash(); narrate(`Vendeu ${v.name} por ${money(gain)}.`, `🏝️ Seu amigo vendeu uma ilha.`, 'money'); },
+  resort(d) { const isle=G.player.islands.find(x=>x.uid===d.id); isle.mode='resort'; narrate(`${isle.name} agora é um resort.`, `🏝️ Seu amigo transformou uma ilha em resort.`, 'money'); },
+  hideout(d) { const isle=G.player.islands.find(x=>x.uid===d.id); isle.mode='hideout'; narrate(`${isle.name} virou esconderijo.`, null,'crime'); },
+  auction(d) { startAuction(d.id); },
+  bid() { placeBid(); },
+  crime(d) { tryCrime(CRIMES.find(c=>c.id===d.id)); },
+  street(d) { stealStreet(d.id); },
+  lawyer(d) {
+    const years=G.modal.years;
+    if(d.id==='none'){ closeModal(); convict(years); return; }
+    const tiers=[[500,0.28],[8000,0.58],[40000,0.84]];
+    const tier=tiers[+d.id];
+    const cost=priceOf(tier[0]);
+    if(G.player.money<cost) return toast('Sem honorários.');
+    G.player.money-=cost;
+    let chance=tier[1]+(G.player.talent==='crime'?0.08:0)+(G.player.smarts/1000);
+    closeModal();
+    if(Math.random()<chance){ SFX.success(); narrate('O advogado derrubou a acusação.', '⚖️ Seu amigo escapou de uma condenação.', 'good'); }
+    else convict(years);
+  },
+  prison(d) {
+    const p=G.player;
+    closeModal();
+    if(d.id==='yard'){ p.health=clamp(p.health+10,0,100); p.happiness=clamp(p.happiness+4,0,100); narrate('O pátio deixou você mais forte.', null,'good'); }
+    else if(d.id==='riot'){
+      if(Math.random()<0.22+(p.talent==='crime'?0.12:0)){ p.inPrison=false; p.sentence=0; p.health=clamp(p.health-10,0,100); flash(); narrate('A rebelião abriu um buraco. Você sumiu.', '🚨 Seu amigo fugiu numa rebelião.', 'crime'); }
+      else { p.sentence+=2; p.health=clamp(p.health-16,0,100); SFX.fail(); narrate('A rebelião foi contida. A pena cresceu.', null,'bad'); }
+    } else if(d.id==='bribe'){
+      const cost=priceOf(15000);
+      if(p.money<cost) return narrate('O guarda riu: você não tinha o bastante.', null,'bad');
+      p.money-=cost;
+      if(Math.random()<0.48){ p.inPrison=false; p.sentence=0; narrate('O portão abriu sem alarde.', '🚨 Seu amigo subornou a saída da prisão.', 'crime'); }
+      else { p.sentence+=1; narrate('O guarda pegou o dinheiro e te delatou.', null,'bad'); }
+    } else { G.modal={type:'escape', safe:rand(0,2)}; changed(); }
+  },
+  route(d) {
+    const safe=+G.modal.safe;
+    closeModal();
+    if(+d.id===safe){ G.player.inPrison=false; G.player.sentence=0; G.player.heat=40; G.player.karma=clamp(G.player.karma-5,0,100); narrate('A rota estava limpa. Você está fora.', '🚨 Seu amigo escapou da prisão.', 'crime'); }
+    else { G.player.sentence+=2; G.player.health=clamp(G.player.health-12,0,100); SFX.siren(); narrate('A rota estava vigiada. Mais dois anos.', null,'bad'); }
+  },
+  meet() { if(!assertLiving())return; const p=G.player; if(p.age<14) return toast('Cedo demais.'); if(p.relations.filter(r=>r.alive && (r.role==='friend'||r.role==='crush')).length>=5) return toast('Sua agenda já está cheia.'); const g=pick(['m','f','x']); const crush=p.age>=16 && !spouseOf(p) && Math.random()<0.55; p.relations.push(makePerson(crush?'crush':'friend', g==='x'?'x':g, Math.max(14,p.age+rand(-4,5)))); const r=p.relations[p.relations.length-1]; narrate(`Você conheceu ${r.name}.`, null,'good'); },
+  talk(d) { const r=findRel(d.id); if(!r?.alive) return; r.bond=clamp(r.bond+rand(3,7),0,100); G.player.happiness=clamp(G.player.happiness+2,0,100); if(r.isPlayer && G.mp.on) send({t:'social', op:'talk'}); narrate(`Conversa com ${r.name}. O vínculo foi para ${r.bond}.`, null,'good'); },
+  compliment(d) { const r=findRel(d.id); if(!r?.alive) return; r.bond=clamp(r.bond+6,0,100); G.player.looks=clamp(G.player.looks+1,0,100); narrate(`Você elogiou ${r.name}.`, null,'good'); },
+  trip(d) { const r=findRel(d.id); if(!r?.alive) return; const cost=priceOf(800); if(!payWithCashThen(cost,()=>{})) return; r.bond=clamp(r.bond+12,0,100); G.player.happiness=clamp(G.player.happiness+8,0,100); narrate(`Viagem com ${r.name}.`, null,'good'); },
+  argue(d) { const r=findRel(d.id); if(!r?.alive) return; r.bond=clamp(r.bond-12,0,100); G.player.happiness=clamp(G.player.happiness-4,0,100); narrate(`Discussão com ${r.name}.`, null,'bad'); },
+  gift(d) { if(!G.player.items.length) return toast('Você não tem objetos.'); G._gift=d.id; pushModal({type:'gift'}); changed(); },
+  give(d) { const item=G.player.items.find(i=>i.uid===d.id); const r=findRel(G._gift); if(!item||!r) return; G.player.items=G.player.items.filter(i=>i.uid!==item.uid); r.bond=clamp(r.bond+16,0,100); closeModal(); narrate(`Você deu ${item.name} para ${r.name}.`, r.isPlayer?`🎁 Seu amigo te deu ${item.name}.`:null, 'good'); },
+  'marry-npc'(d) { const r=findRel(d.id); if(!r || r.bond<55) return toast('Ainda não é um sim.'); if(spouseOf()) return toast('Você já tem um casamento.'); const cost=priceOf(1800); if(G.player.money<cost) return toast('A festa custa '+money(cost)+'.'); pushModal({type:'confirm', title:'Casar com '+r.name, text:'Com acordo, o divórcio não parte o seu dinheiro.', yes:'marry-go', payload:{id:r.id}}); changed(); },
+  'marry-go'() { const id=G.modal.payload.id; closeModal(); const r=findRel(id); const cost=priceOf(1800); G.player.money-=cost; r.role='spouse'; r.bond=86; G.player.prenup=true; SFX.success(); confetti(); narrate(`Você casou com ${r.name}, com pré-nupcial.`, null,'good'); },
+  breakup(d) {
+    const r=findRel(d.id); if(!r) return;
+    if(r.role==='spouse' && !G.player.prenup){ const loss=Math.round(G.player.money*0.4); G.player.money-=loss; pushLog('A partilha levou '+money(loss)+'.', 'money'); }
+    r.role='rival'; r.bond=10; if(r.isPlayer){ G.player.marriedToPlayer=false; send({t:'divorce'}); }
+    narrate(`Você terminou com ${r.name}.`, r.isPlayer?'💔 Seu amigo terminou com você.':null, 'bad');
+  },
+  'sue-npc'(d) { const r=findRel(d.id); const cost=priceOf(2500); if(G.player.money<cost) return toast('Processo custa '+money(cost)+'.'); G.player.money-=cost; r.bond=0; r.role='rival'; if(Math.random()<0.45){ const gain=rand(2000,9000); G.player.money+=gain; narrate(`Você processou ${r.name} e recebeu ${money(gain)}.`, null,'money'); } else narrate(`Você processou ${r.name} e perdeu.`, null,'bad'); },
+  baby() { const p=G.player; if(!spouseOf(p)) return toast('Primeiro, um casamento.'); if(p.age<18||p.age>48) return toast('Fora da janela desta vida.'); const cost=priceOf(4000); if(p.money<cost) return toast('Um bebê pede '+money(cost)+' de preparo.'); p.money-=cost; const g=pick(['m','f']); const child=makePerson('child', g, 0); child.bond=90; p.relations.push(child); p.happiness=clamp(p.happiness+14,0,100); narrate(`${child.name} nasceu.`, '🍼 Seu amigo teve um filho.', 'good'); },
+  pet(d) { const spec=PETS.find(x=>x.id===d.id); const cost=priceOf(spec.cost); if(G.player.money<cost) return toast('Custa '+money(cost)+'.'); if(G.player.relations.filter(r=>r.role==='pet'&&r.alive).length>=4) return toast('A casa já é um zoológico.'); G.player.money-=cost; G.player.relations.push({ id:uid(), role:'pet', name:spec.name, emoji:spec.emoji, gender:'x', age:1, bond:60, alive:true, upkeep:Math.round(spec.upkeep*country().col), joy:spec.joy, life:spec.life }); narrate(`${spec.emoji} ${spec.name} agora mora com você.`, spec.id==='tiger'?'🐯 Seu amigo adotou um tigre.':null, 'good'); },
+  doctor() { if(!spendAction())return; const p=G.player; const cost=priceOf(p.conditions.length?700:350); if(p.money<cost) return toast('A consulta custa '+money(cost)+'.'); p.money-=cost; if(p.conditions.length){ const c=p.conditions.pop(); p.health=clamp(p.health+12,0,100); narrate('O médico cuidou de '+c.name+'.', null,'good'); } else { p.health=clamp(p.health+5,0,100); narrate('Check-up sem sustos.', null,'good'); } },
+  gym() { if(!spendAction())return; const bonus=G.player.talent==='sports'?4:0; G.player.health=clamp(G.player.health+8+bonus,0,100); G.player.looks=clamp(G.player.looks+3,0,100); G.player.happiness=clamp(G.player.happiness+2,0,100); narrate('Treino feito.', null,'good'); },
+  meditate() { if(!spendAction())return; const bonus=G.player.talent==='music'?3:0; G.player.happiness=clamp(G.player.happiness+8+bonus,0,100); G.player.health=clamp(G.player.health+2,0,100); narrate('Um tempo em silêncio.', null,'good'); },
+  read() { if(!spendAction())return; G.player.smarts=clamp(G.player.smarts+6,0,100); G.player.happiness=clamp(G.player.happiness+2,0,100); narrate('Você fechou um livro inteiro.', null,'good'); },
+  plastic() { const cost=priceOf(20000); if(G.player.money<cost) return toast('A cirurgia custa '+money(cost)+'.'); G.player.money-=cost; G.player.looks=clamp(G.player.looks+15,0,100); if(Math.random()<0.12) G.player.health=clamp(G.player.health-18,0,100); narrate('Você saiu da clínica diferente.', null,'info'); },
+  vacation() { const cost=priceOf(3000); if(G.player.money<cost) return toast('As férias custam '+money(cost)+'.'); G.player.money-=cost; G.player.happiness=clamp(G.player.happiness+18,0,100); G.player.health=clamp(G.player.health+4,0,100); if(G.player.conditions.length && Math.random()<0.4) G.player.conditions.pop(); narrate('Férias. O ombro desceu.', null,'good'); },
+  bj(d) { dealBj(d.id?+d.id:500); },
+  hit() { const t=G.table; t.player.push(t.deck.pop()); if(handValue(t.player)>=21) settleBj(handValue(t.player)>21?'bust':'stand'); else render(); },
+  stand() { settleBj('stand'); },
+  red(){ spinRoulette('red'); }, black(){ spinRoulette('black'); }, green(){ spinRoulette('green'); },
+  'p-talk'() { const r=G.player.relations.find(x=>x.isPlayer); if(r){ r.bond=clamp(r.bond+5,0,100);} G.player.happiness=clamp(G.player.happiness+2,0,100); if(G.mp.on) send({t:'social', op:'talk'}); narrate('Você puxou conversa com seu amigo.', null,'good'); },
+  pix() { pushModal({type:'amount', title:'Enviar dinheiro', yes:'pix-go', value:1000}); changed(); },
+  'pix-go'() { const n=Math.round(+document.getElementById('amount').value||0); closeModal(); if(n<=0||G.player.money<n) return toast('Valor inválido.'); G.player.money-=n; send({t:'pix', amount:n}); SFX.cash(); narrate('Você enviou '+money(n)+'.', null,'money'); },
+  ask() { pushModal({type:'amount', title:'Pedir emprestado', yes:'ask-go', value:2000}); changed(); },
+  'ask-go'() { const n=Math.round(+document.getElementById('amount').value||0); closeModal(); if(n<=0) return; send({t:'ask', amount:n}); toast('Pedido enviado.'); },
+  'ask-yes'() { const n=G.modal.payload; closeModal(); if(G.player.money<n) return toast('Você não tem esse valor.'); G.player.money-=n; send({t:'pix', amount:n, reason:'pedido'}); narrate('Você emprestou '+money(n)+' ao seu amigo.', null,'money'); },
+  'confirm-no'() { const m=G.modal; closeModal(); if(m?.yes==='company-yes') send({t:'company', op:'no'}); if(m?.yes==='heist-yes') send({t:'heist', op:'no'}); changed(); },
+  company() { if(!G.mp.on) return toast('Sociedade pede dois jogadores.'); if(G.player.company) return toast('Você já tem uma sociedade.'); const buyIn=20000; if(G.player.money<buyIn) return toast('A entrada é '+money(buyIn)+'.'); send({t:'company', op:'invite', buyIn, name:'Duo '+G.player.last}); toast('Convite enviado.'); },
+  'company-yes'() { const payload=G.modal.payload; closeModal(); if(G.player.money<payload.buyIn) return toast('Entrada insuficiente.'); G.player.money-=payload.buyIn; G.player.company={name:payload.name, invested:payload.buyIn}; send({t:'company', op:'accept', buyIn:payload.buyIn, name:payload.name}); narrate('Você entrou na sociedade '+payload.name+'.', null,'good'); },
+  propose() { if(!G.mp.on||!G.friend?.alive) return toast('Seu amigo precisa estar aqui.'); if(spouseOf()) return toast('Você já é casado.'); if(G.friend.married) return toast('Seu amigo já é casado.'); pushModal({type:'confirm', title:'Como casar?', text:'O pré-nupcial evita partilhar dinheiro num divórcio.', yes:'propose-go', payload:{prenup:true}}); changed(); },
+  'propose-go'() { closeModal(); send({t:'propose', prenup:true}); toast('Pedido enviado, com pré-nupcial.'); },
+  'propose-yes'() { const prenup=!!G.modal.prenup; closeModal(); if(spouseOf()) return send({t:'propose-no'}); const r=G.player.relations.find(x=>x.isPlayer); if(r){ r.role='spouse'; r.bond=90; } G.player.marriedToPlayer=true; G.player.prenup=prenup; send({t:'married', prenup}); SFX.success(); confetti(); narrate(prenup?'Vocês disseram sim, com pré-nupcial.':'Vocês disseram sim.', '💍 Seu amigo casou com você.', 'good'); },
+  'propose-no'() { closeModal(); send({t:'propose-no'}); changed(); },
+  fight() { if(!G.mp.on||!G.friend?.alive||!assertLiving()) return; const seed=rand(1,0xffffffff); send({t:'fight', seed}); applyFight(seed); if(G.mp.on) send({t:'feed', text:'🥊 Seu amigo partiu para a briga.', kind:'bad'}); },
+  sue() { if(!G.mp.on||!assertLiving()) return; const cost=priceOf(8000); if(G.player.money<cost) return toast('Custa '+money(cost)+'.'); const win=Math.random()<0.55; const claim=rand(12000,50000); G.player.money-=cost; send({t:'sue', win, claim}); if(win){ const got=Math.min(claim, G.friend?.money||claim); G.player.money+=got; narrate('Você ganhou o processo: '+money(got)+'.', '⚖️ Seu amigo te processou.', 'money'); } else narrate('Você pagou o processo e perdeu.', '⚖️ Seu amigo te processou e perdeu.', 'bad'); },
+  heir() { G.player.heir = G.player.heir==='friend'? null : 'friend'; narrate(G.player.heir?'Seu amigo está no testamento.':'Você refez o testamento.', '📜 Seu amigo mexeu no testamento.', 'info'); },
+  'steal-money'() { if(!G.mp.on||!assertLiving()) return; const amount=Math.max(0, Math.round((G.friend?.money||0)*0.12)); const chance=0.45+(G.player.talent==='crime'?0.15:0); if(Math.random()<chance && amount>0){ G.player.money+=amount; G.player.crimes++; G.player.karma=clamp(G.player.karma-8,0,100); send({t:'steal', kind:'money', amount}); SFX.cash(); narrate('Você tirou '+money(amount)+' do seu amigo.', null,'crime'); } else { send({t:'steal', kind:'money', amount:0}); pushLog('O furto na carteira do seu amigo falhou.', 'crime'); if(Math.random()<0.45) jailRisk(1,'furto'); else changed(); } },
+  'steal-car'() { if(!G.mp.on||!G.friend?.vehicles?.length) return toast('Seu amigo não tem veículo.'); if(!assertLiving())return; const veh=G.friend.vehicles[0]; const success=Math.random()<0.34+(G.player.talent==='crime'?0.16:0); send({t:'steal', kind:'car', success, veh}); if(success){ G.player.vehicles.push({uid:uid(), id:veh.id, name:veh.name, emoji:veh.emoji, value:40000, stolen:true}); G.player.crimes++; G.player.karma=clamp(G.player.karma-12,0,100); narrate('Você fugiu com o '+veh.name+' do seu amigo.', null,'crime'); } else { pushLog('O carro do seu amigo continuou no lugar.', 'crime'); if(Math.random()<0.5) jailRisk(2,'furto de veículo'); else changed(); } },
+  heist() { if(!G.mp.on) return toast('Chame um amigo para o banco.'); if(!assertLiving()||G.player.inPrison) return; const seed=rand(1,0xffffffff); send({t:'heist', op:'invite', seed}); toast('Convite de assalto enviado.'); },
+  'heist-yes'() { const seed=G.modal.payload; closeModal(); G.heist={active:true, seed, choices:{}, ends:Date.now()+8000}; send({t:'heist', op:'accept', seed}); pushModal({type:'heist'}); changed(); },
+  'heist-choice'(d) { if(!G.heist?.active) return; G.heist.choices[mySide()]=d.id; send({t:'heist', op:'choice', choice:d.id, side:mySide()}); maybeResolveHeist(); render(); },
+  scare(){ haunt('scare'); }, luck(){ haunt('luck'); },
+  'as-child'(){ continueChild(); },
+  'as-ghost'(){ becomeGhost(); },
+  'see-grave'(){ G.screen='grave'; closeModal(); render(); },
+  reset() { const theme=G.theme, layout=G.layout; const mp=G.mp; G.player=null; G.log=[]; G.modal=null; G.modalQueue=[]; G.epitaph=null; G.afterlife=false; G.screen='menu'; G.theme=theme; G.layout=layout; G.mp=mp; freshMarket(); render(); },
+  close() { closeModal(); changed(); }
+};
+function moveBank(frac, into) {
+  const p=G.player;
+  if(into){ const n=frac===1?p.money:Math.round(p.money*frac); if(n<=0) return; p.money-=n; p.savings+=n; }
+  else { const n=frac===1?p.savings:Math.round(p.savings*frac); if(n<=0) return; p.savings-=n; p.money+=n; }
+  changed();
+}
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const act = b.dataset.act;
+  if (!b.dataset.quiet) { try { SFX.click(); } catch (err) {} }
+  const fn = ACTIONS[act];
+  if (!fn) return;
+  try { fn(b.dataset); }
+  catch (err) { console.error(err); toast('Algo quebrou: ' + err.message); }
+});
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'f-country' || e.target.id === 'f-gender' || e.target.id === 'f-talent') {
+    captureDraft();
+    if (e.target.id === 'f-country') G.draft.city = (COUNTRIES.find(c=>c.id===G.draft.countryId)||COUNTRIES[0]).cities[0];
+    render();
+  }
+});
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'vol') { SFX.volume = Number(e.target.value); localStorage.setItem('vd-vol', SFX.volume); }
+  if (e.target.id === 'f-first' || e.target.id === 'f-last') {
+    const prev = document.getElementById('name-preview');
+    if (prev) prev.textContent = document.getElementById('f-first').value + ' ' + document.getElementById('f-last').value;
+  }
+});
+setInterval(() => {
+  const auc = document.getElementById('auc-left');
+  if (G.auction?.active && auc) {
+    const left = Math.max(0, G.auction.ends - Date.now());
+    auc.textContent = Math.ceil(left/1000) + 's';
+    if (left <= 0 && !G.auction.closing) {
+      G.auction.closing = true;
+      if (!G.mp.on || G.mp.isHost) finishAuction();
+    }
+  }
+  const he = document.getElementById('heist-left');
+  if (G.heist?.active && he) {
+    he.textContent = Math.max(0, Math.ceil((G.heist.ends - Date.now())/1000)) + 's';
+    maybeResolveHeist();
+  }
+}, 250);
+function boot() {
+  freshMarket();
+  document.documentElement.dataset.theme = G.theme;
+  document.documentElement.dataset.layout = G.layout;
+  render();
+}
+boot();
+</script>
+</body>
+</html>
